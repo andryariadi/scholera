@@ -19,6 +19,9 @@ export const metadata: Metadata = {
   },
   description: "Scholera is a modern school management system designed to manage students, teachers, classes, schedules, and school administration efficiently in one centralized platform.",
   category: "education",
+  icons: {
+    icon: "/logo.png",
+  },
 };
 
 export default function RootLayout({
@@ -27,7 +30,7 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en">
+    <html lang="en" className="light">
       <body className={`${geistSans.variable} ${geistMono.variable} antialiased`}>{children}</body>
     </html>
   );
