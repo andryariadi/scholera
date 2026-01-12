@@ -1,8 +1,18 @@
 @import "tailwindcss";
 
 :root {
-  --background: #ffffff;
+  --background: #f7f8fa;
   --foreground: #171717;
+
+  /* === Scholera Color Palette === */
+  --scholera-sky: #c3ebfa;
+  --scholera-sky-light: #edf9fd;
+
+  --scholera-purple: #cfceff;
+  --scholera-purple-light: #f1f0ff;
+
+  --scholera-yellow: #fae27c;
+  --scholera-yellow-light: #fefce8;
 }
 
 @theme inline {
@@ -10,6 +20,23 @@
   --color-foreground: var(--foreground);
   --font-sans: var(--font-geist-sans);
   --font-mono: var(--font-geist-mono);
+
+  /* === Scholera Color Palette === */
+  --color-scholera-sky: var(--scholera-sky);
+  --color-scholera-sky-light: var(--scholera-sky-light);
+
+  --color-scholera-purple: var(--scholera-purple);
+  --color-scholera-purple-light: var(--scholera-purple-light);
+
+  --color-scholera-yellow: var(--scholera-yellow);
+  --color-scholera-yellow-light: var(--scholera-yellow-light);
+}
+
+@media (prefers-color-scheme: light) {
+  :root {
+    --background: #f7f8fa;
+    --foreground: #171717;
+  }
 }
 
 /* @media (prefers-color-scheme: dark) {
@@ -18,13 +45,6 @@
     --foreground: #ededed;
   }
 } */
-
-@media (prefers-color-scheme: light) {
-  :root {
-    --background: #f7f8fa;
-    --foreground: #171717;
-  }
-}
 
 @layer base {
   html {
