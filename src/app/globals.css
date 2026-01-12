@@ -1,7 +1,7 @@
 @import "tailwindcss";
 
 :root {
-  --background: #09ba3e;
+  --background: #f7f8fa;
   --foreground: #171717;
 
   /* === Scholera Color Palette === */
@@ -34,7 +34,7 @@
 
 @media (prefers-color-scheme: light) {
   :root {
-    --background: #f50303;
+    --background: #f7f8fa;
     --foreground: #171717;
   }
 }
