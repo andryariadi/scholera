@@ -17,7 +17,7 @@ export default function DashboardLayout({
       <section className="b-white w-full ml-[14%] md:ml-[8%] lg:ml-[16%] xl:ml-[14%] min-h-400">
         <Navbar />
 
-        <main className="b-fuchsia-500 p-5">{children}</main>
+        <main className="b-fuchsia-500 px-5 py-2">{children}</main>
       </section>
     </div>
   );
