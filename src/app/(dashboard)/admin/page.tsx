@@ -1,15 +1,17 @@
+import Announcement from "@/components/Announcement";
 import AttendanceChart from "@/components/AttendanceChart";
+import EvCalendar from "@/components/EvCalendar";
 import FinanceChart from "@/components/FinanceChart";
 import StudentChart from "@/components/StudentChart";
 import UserCard from "@/components/UserCard";
 
 const AdminPage = () => {
   return (
-    <section className="bg-amber-500 flex flex-col md:flex-row gap-4">
+    <section className="flex flex-col md:flex-row gap-4">
       {/* Left - Content */}
-      <div className="bg-rose-500 w-full lg:max-w-2/3 space-y-5 ">
+      <div className="w-full lg:max-w-2/3 space-y-5 ">
         {/* Users Card */}
-        <div className="bg-green-500 flex items-center justify-between gap-4 flex-wrap">
+        <div className="flex items-center justify-between gap-4 flex-wrap">
           <UserCard type="student" />
           <UserCard type="teacher" />
           <UserCard type="parent" />
@@ -17,26 +19,32 @@ const AdminPage = () => {
         </div>
 
         {/* Middle Chart */}
-        <div className="bg-blue-500 flex flex-col md:flex-row gap-4">
+        <div className="flex flex-col lg:flex-row gap-4">
           {/* Student Chart */}
-          <div className="bg-teal-600 w-full lg:w-1/3 h-112.5">
+          <div className="w-full lg:w-1/3 h-112.5">
             <StudentChart />
           </div>
 
           {/* Attendance Chart */}
-          <div className="bg-violet-600 w-full lg:w-2/3 h-112.5">
+          <div className="w-full lg:w-2/3 h-112.5">
             <AttendanceChart />
           </div>
         </div>
 
         {/* Bottom Chart */}
-        <div className="bg-pink-500 h-125">
+        <div className="h-125">
           <FinanceChart />
         </div>
       </div>
 
       {/* Right - Content */}
-      <div className="bg-fuchsia-500 w-full lg:max-w-1/3">andry</div>
+      <div className="w-full lg:max-w-1/3 space-y-5">
+        {/* Calendar */}
+        <EvCalendar />
+
+        {/* Announcement */}
+        <Announcement />
+      </div>
     </section>
   );
 };
