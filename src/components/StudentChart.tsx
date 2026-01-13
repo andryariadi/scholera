@@ -3,7 +3,7 @@
 import { studentsData } from "@/libs/constants";
 import { Ellipsis } from "lucide-react";
 import Image from "next/image";
-import { ResponsiveContainer, RadialBarChart, RadialBar, Legend, Tooltip } from "recharts";
+import { ResponsiveContainer, RadialBarChart, RadialBar, Tooltip } from "recharts";
 
 const StudentChart = () => {
   return (
@@ -17,8 +17,10 @@ const StudentChart = () => {
       {/* Chart */}
       <div className="b-amber-500 relative w-full h-[75%]">
         <ResponsiveContainer>
-          <RadialBarChart cx="50%" cy="50%" innerRadius="40%" outerRadius="100%" barSize={32} data={studentsData}>
+          <RadialBarChart responsive cx="50%" cy="50%" innerRadius="40%" outerRadius="100%" barSize={32} data={studentsData}>
             <RadialBar background dataKey="count" />
+
+            <Tooltip contentStyle={{ borderRadius: "10px", borderColor: "lightgray", color: "gray" }} />
           </RadialBarChart>
         </ResponsiveContainer>
 
