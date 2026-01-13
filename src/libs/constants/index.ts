@@ -223,3 +223,66 @@ export const financeData = [
     expense: 8300,
   },
 ];
+
+export const eventsData = [
+  {
+    id: 1,
+    title: "School Orientation Day",
+    date: "2025-01-08",
+    time: "08:00 AM - 11:00 AM",
+    location: "Main Hall",
+    description: "An orientation program for new students to introduce school rules, teachers, and academic activities.",
+    category: "Academic",
+  },
+  {
+    id: 2,
+    title: "Parent-Teacher Meeting",
+    date: "2025-01-12",
+    time: "01:00 PM - 04:00 PM",
+    location: "Classrooms",
+    description: "A scheduled meeting between parents and teachers to discuss students' progress and performance.",
+    category: "Meeting",
+  },
+  {
+    id: 3,
+    title: "Midterm Examination",
+    date: "2025-01-20",
+    time: "07:30 AM - 12:00 PM",
+    location: "Exam Rooms",
+    description: "Midterm examinations for all grades. Students are required to arrive 30 minutes earlier.",
+    category: "Exam",
+  },
+  {
+    id: 4,
+    title: "School Sports Day",
+    date: "2025-01-25",
+    time: "07:00 AM - 03:00 PM",
+    location: "School Field",
+    description: "A full-day sports event to encourage teamwork, discipline, and physical fitness among students.",
+    category: "Activity",
+  },
+];
+
+export const announcementsData = [
+  {
+    id: 1,
+    title: "New Academic Year Started",
+    date: "2025-01-01",
+    description: "The new academic year has officially started. Please make sure all students are registered and schedules are finalized.",
+    variant: "sky",
+  },
+  {
+    id: 2,
+    title: "Parent-Teacher Meeting",
+    date: "2025-01-05",
+    description: "A parent-teacher meeting will be held to discuss student progress and upcoming school programs.",
+    variant: "purple",
+  },
+  {
+    id: 3,
+    title: "Midterm Examination Schedule",
+    date: "2025-01-10",
+    description: "The midterm examination schedule has been published. Students are advised to prepare accordingly.",
+    variant: "yellow",
+  },
+];
