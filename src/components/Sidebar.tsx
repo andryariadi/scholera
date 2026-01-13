@@ -4,7 +4,7 @@ import Link from "next/link";
 
 const Sidebar = () => {
   return (
-    <aside className="b-teal-500 space-y-5 h-full overflow-x-hidden scrollbar-hide">
+    <aside className="b-teal-500 space-y-5 h-full overflow-hidden scrollbar-hide">
       {/* Top - Logo */}
       <Link href="/" className="flex items-center justify-center lg:justify-start gap-2">
         <Image src="/logo.png" alt="Logo" width={32} height={32} className="shrink-0" />
