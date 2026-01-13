@@ -13,37 +13,37 @@ export const menuItems = [
       {
         icon: GraduationCap,
         label: "Teachers",
-        href: "/teachers",
+        href: "/teacher",
         visible: ["admin", "teacher"],
       },
       {
         icon: Users,
         label: "Students",
-        href: "/students",
+        href: "/student",
         visible: ["admin", "teacher"],
       },
       {
         icon: User,
         label: "Parents",
-        href: "/parents",
+        href: "/parent",
         visible: ["admin", "teacher"],
       },
       {
         icon: BookOpen,
         label: "Subjects",
-        href: "/subjects",
+        href: "/subject",
         visible: ["admin"],
       },
       {
         icon: School,
         label: "Classes",
-        href: "/classes",
+        href: "/classe",
         visible: ["admin", "teacher"],
       },
       {
         icon: NotebookText,
         label: "Lessons",
-        href: "/lessons",
+        href: "/lesson",
         visible: ["admin", "teacher"],
       },
       {
@@ -55,13 +55,13 @@ export const menuItems = [
       {
         icon: ClipboardList,
         label: "Assignments",
-        href: "/assignments",
+        href: "/assignment",
         visible: ["admin", "teacher", "student", "parent"],
       },
       {
         icon: BarChart3,
         label: "Results",
-        href: "/results",
+        href: "/result",
         visible: ["admin", "teacher", "student", "parent"],
       },
       {
@@ -73,19 +73,19 @@ export const menuItems = [
       {
         icon: CalendarDays,
         label: "Events",
-        href: "/events",
+        href: "/event",
         visible: ["admin", "teacher", "student", "parent"],
       },
       {
         icon: MessageSquare,
         label: "Messages",
-        href: "/messages",
+        href: "/message",
         visible: ["admin", "teacher", "student", "parent"],
       },
       {
         icon: Megaphone,
         label: "Announcements",
-        href: "/announcements",
+        href: "/announcement",
         visible: ["admin", "teacher", "student", "parent"],
       },
     ],
@@ -102,7 +102,7 @@ export const menuItems = [
       {
         icon: Settings,
         label: "Settings",
-        href: "/settings",
+        href: "/setting",
         visible: ["admin", "teacher", "student", "parent"],
       },
       {
@@ -112,5 +112,23 @@ export const menuItems = [
         visible: ["admin", "teacher", "student", "parent"],
       },
     ],
+  },
+];
+
+export const studentsData = [
+  {
+    name: "Total",
+    count: 106,
+    fill: "white",
+  },
+  {
+    name: "Girls",
+    count: 53,
+    fill: "#FAE27C",
+  },
+  {
+    name: "Boys",
+    count: 53,
+    fill: "#C3EBFA",
   },
 ];

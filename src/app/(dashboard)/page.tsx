@@ -1,3 +1,3 @@
 export default function Home() {
-  return <main className="b-rose-500">andry</main>;
+  return <section className="b-rose-500">andry</section>;
 }
