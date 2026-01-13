@@ -118,17 +118,108 @@ export const menuItems = [
 export const studentsData = [
   {
     name: "Total",
-    count: 106,
+    count: 130,
     fill: "white",
   },
   {
     name: "Girls",
-    count: 53,
+    count: 73,
     fill: "#FAE27C",
   },
   {
     name: "Boys",
-    count: 53,
+    count: 57,
     fill: "#C3EBFA",
+  },
+];
+
+export const attendanceData = [
+  {
+    name: "Mon",
+    present: 60,
+    absent: 40,
+  },
+  {
+    name: "Tue",
+    present: 70,
+    absent: 60,
+  },
+  {
+    name: "Wed",
+    present: 90,
+    absent: 75,
+  },
+  {
+    name: "Thu",
+    present: 90,
+    absent: 75,
+  },
+  {
+    name: "Fri",
+    present: 65,
+    absent: 55,
+  },
+];
+
+export const financeData = [
+  {
+    name: "Jan",
+    income: 4000,
+    expense: 2400,
+  },
+  {
+    name: "Feb",
+    income: 3000,
+    expense: 1398,
+  },
+  {
+    name: "Mar",
+    income: 2000,
+    expense: 9800,
+  },
+  {
+    name: "Apr",
+    income: 2780,
+    expense: 3908,
+  },
+  {
+    name: "May",
+    income: 1890,
+    expense: 4800,
+  },
+  {
+    name: "Jun",
+    income: 2390,
+    expense: 3800,
+  },
+  {
+    name: "Jul",
+    income: 3490,
+    expense: 4300,
+  },
+  {
+    name: "Aug",
+    income: 3490,
+    expense: 4300,
+  },
+  {
+    name: "Sep",
+    income: 8490,
+    expense: 4300,
+  },
+  {
+    name: "Oct",
+    income: 2490,
+    expense: 6300,
+  },
+  {
+    name: "Nov",
+    income: 5490,
+    expense: 3300,
+  },
+  {
+    name: "Dec",
+    income: 8490,
+    expense: 8300,
   },
 ];
