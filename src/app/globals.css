@@ -54,6 +54,14 @@
   body {
     @apply bg-background text-foreground font-sans;
   }
+
+  .action-btn {
+    @apply w-8 h-8 flex items-center justify-center rounded-full bg-scholera-yellow;
+  }
+
+  .pagination-btn {
+    @apply py-2 px-4 rounded-md bg-slate-200 text-xs font-semibold disabled:opacity-50 disabled:cursor-not-allowed;
+  }
 }
 
 /* Scrollbar Styling */
