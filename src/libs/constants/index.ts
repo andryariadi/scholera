@@ -286,3 +286,46 @@ export const announcementsData = [
     variant: "yellow",
   },
 ];
+
+export const calendarEvents = [
+  {
+    title: "Math",
+    start: new Date(2026, 0, 12, 8, 0),
+    end: new Date(2026, 0, 12, 8, 45),
+  },
+  {
+    title: "English",
+    start: new Date(2026, 0, 12, 9, 0),
+    end: new Date(2026, 0, 12, 9, 45),
+  },
+  {
+    title: "Biology",
+    start: new Date(2026, 0, 12, 10, 0),
+    end: new Date(2026, 0, 12, 10, 45),
+  },
+  {
+    title: "Physics",
+    start: new Date(2026, 0, 13, 8, 0),
+    end: new Date(2026, 0, 13, 8, 45),
+  },
+  {
+    title: "Chemistry",
+    start: new Date(2026, 0, 13, 9, 0),
+    end: new Date(2026, 0, 13, 9, 45),
+  },
+  {
+    title: "History",
+    start: new Date(2026, 0, 14, 10, 0),
+    end: new Date(2026, 0, 14, 10, 45),
+  },
+  {
+    title: "English",
+    start: new Date(2026, 0, 15, 11, 0),
+    end: new Date(2026, 0, 15, 11, 45),
+  },
+  {
+    title: "Math",
+    start: new Date(2026, 0, 16, 13, 0),
+    end: new Date(2026, 0, 16, 13, 45),
+  },
+];

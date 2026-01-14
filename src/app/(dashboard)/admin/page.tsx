@@ -9,7 +9,7 @@ const AdminPage = () => {
   return (
     <section className="flex flex-col md:flex-row gap-4">
       {/* Left - Content */}
-      <div className="w-full lg:max-w-2/3 space-y-5 ">
+      <div className="w-full lg:max-w-2/3 space-y-5">
         {/* Users Card */}
         <div className="flex items-center justify-between gap-4 flex-wrap">
           <UserCard type="student" />
