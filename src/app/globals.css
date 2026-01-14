@@ -59,6 +59,10 @@
     @apply w-8 h-8 flex items-center justify-center rounded-full bg-scholera-yellow;
   }
 
+  .action-btn-table {
+    @apply w-7 h-7 flex items-center justify-center rounded-full;
+  }
+
   .pagination-btn {
     @apply py-2 px-4 rounded-md bg-slate-200 text-xs font-semibold disabled:opacity-50 disabled:cursor-not-allowed;
   }
