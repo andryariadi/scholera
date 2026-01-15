@@ -6,7 +6,7 @@ import { Filter, Plus, SortDesc, Trash, View } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
 
-const StudentList = () => {
+const StudentListPage = () => {
   const role = "admin";
 
   const columns = [
@@ -124,4 +124,4 @@ const StudentList = () => {
   );
 };
 
-export default StudentList;
+export default StudentListPage;

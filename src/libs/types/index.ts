@@ -42,3 +42,10 @@ type Parent = {
   phone: string;
   address: string;
 };
+
+type Announcement = {
+  id: number;
+  title: string;
+  class: string;
+  date: string;
+};

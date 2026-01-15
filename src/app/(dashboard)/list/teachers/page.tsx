@@ -6,7 +6,7 @@ import { Filter, Plus, SortDesc, Trash, View } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
 
-const TeacherList = () => {
+const TeacherListPage = () => {
   const role = "admin";
 
   const columns = [
@@ -135,4 +135,4 @@ const TeacherList = () => {
   );
 };
 
-export default TeacherList;
+export default TeacherListPage;
