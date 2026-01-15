@@ -5,27 +5,27 @@ import { CalendarDays, Mail, Phone } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
 
-const TeacherDetailPage = () => {
+const StudentDetailPage = () => {
   const role = "admin";
 
   return (
     <section className="b-amber-500 flex flex-col xl:flex-row gap-4">
       {/* Left - Content */}
       <div className="b-rose-500 w-full xl:w-2/3 space-y-4">
-        {/* Top - Teacher Info */}
+        {/* Top - Student Info */}
         <div className="b-green-600 flex flex-col lg:flex-row gap-4">
-          {/* Teacher Profile Card */}
+          {/* Student Profile Card */}
           <div className="bg-scholera-sky w-full p-3 rounded-md flex gap-4">
             {/* Image */}
             <div className="b-cyan-500 2xl:w-1/3">
-              <Image src="https://images.pexels.com/photos/2182970/pexels-photo-2182970.jpeg?auto=compress&cs=tinysrgb&w=1200" alt="Teacher" width={144} height={144} className="w-32 h-32 rounded-full object-cover" />
+              <Image src="https://images.pexels.com/photos/5414817/pexels-photo-5414817.jpeg?auto=compress&cs=tinysrgb&w=1200" alt="Student" width={144} height={144} className="w-32 h-32 rounded-full object-cover" />
             </div>
 
             {/* Details */}
             <div className="b-cyan-500 flex-1 2xl:w-2/3 flex flex-col justify-between gap-3">
               {/* Name */}
               <div className="b-red-500 flex items-center justify-between gap-4">
-                <h1 className="text-xl font-semibold">Leonard Snyder</h1>
+                <h1 className="text-xl font-semibold">Cameron Moran</h1>
 
                 {role === "admin" && <span>Modal</span>}
               </div>
@@ -58,7 +58,7 @@ const TeacherDetailPage = () => {
             </div>
           </div>
 
-          {/* Teacher Performance Card */}
+          {/* Student Performance Card */}
           <div className="b-yellow-600 w-full flex flex-wrap 2xl:justify-between gap-4">
             {/* Attendance Card */}
             <div className="user-performance">
@@ -98,9 +98,9 @@ const TeacherDetailPage = () => {
           </div>
         </div>
 
-        {/* Bottom - Teacher Schedule */}
+        {/* Bottom - Student Schedule */}
         <div className="bg-white shadow-sm rounded-md p-4 h-215">
-          <h1>Teacher&apos;s Schedule</h1>
+          <h1>Student&apos;s Schedule</h1>
           <BigCalendar />
         </div>
       </div>
@@ -112,20 +112,20 @@ const TeacherDetailPage = () => {
           <h1 className="text-xl font-semibold">Shortcuts</h1>
 
           <div className="flex flex-wrap gap-4 text-xs text-gray-500">
-            <Link href="/" className="p-3 rounded-md bg-scholera-sky-light">
-              Teacher&apos;s Classes
+            <Link href="/" className="p-3 rounded-md bg-lamaSkyLight">
+              Student&apos;s Lessons
             </Link>
-            <Link href="/" className="p-3 rounded-md bg-scholera-purple-light">
-              Teacher&apos;s Students
-            </Link>
-            <Link href="/" className="p-3 rounded-md bg-scholera-yellow-light">
-              Teacher&apos;s Lessons
+            <Link href="/" className="p-3 rounded-md bg-lamaPurpleLight">
+              Student&apos;s Teachers
             </Link>
             <Link href="/" className="p-3 rounded-md bg-pink-50">
-              Teacher&apos;s Exams
+              Student&apos;s Exams
             </Link>
-            <Link href="/" className="p-3 rounded-md bg-scholera-sky-light">
-              Teacher&apos;s Assignments
+            <Link href="/" className="p-3 rounded-md bg-lamaSkyLight">
+              Student&apos;s Assignments
+            </Link>
+            <Link href="/" className="p-3 rounded-md bg-lamaYellowLight">
+              Student&apos;s Results
             </Link>
           </div>
         </div>
@@ -140,4 +140,4 @@ const TeacherDetailPage = () => {
   );
 };
 
-export default TeacherDetailPage;
+export default StudentDetailPage;

@@ -63,7 +63,7 @@ const StudentList = () => {
       <td>
         <div className="flex items-center gap-2">
           {/* View */}
-          <Link href={`/list/teachers/${item.id}`}>
+          <Link href={`/list/students/${item.id}`}>
             <button className="action-btn-table bg-scholera-sky">
               <View size={16} />
             </button>
