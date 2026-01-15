@@ -49,3 +49,9 @@ type Announcement = {
   class: string;
   date: string;
 };
+
+type Subject = {
+  id: number;
+  name: string;
+  teachers: string[];
+};

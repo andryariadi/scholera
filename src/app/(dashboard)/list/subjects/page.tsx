@@ -1,24 +1,20 @@
 import Pagination from "@/components/Pagination";
 import Table from "@/components/Table";
 import TableSearch from "@/components/TableSearch";
-import { announcementData } from "@/libs/constants";
+import { subjectsData } from "@/libs/constants";
 import { Filter, Plus, SortDesc } from "lucide-react";
 
-const AnnouncementListPage = () => {
+const SubjectListPage = () => {
   const role = "admin";
 
   const columns = [
     {
-      header: "Title",
-      accessor: "title",
+      header: "Subject Name",
+      accessor: "name",
     },
     {
-      header: "Class",
-      accessor: "class",
-    },
-    {
-      header: "Date",
-      accessor: "date",
+      header: "Teachers",
+      accessor: "teachers",
       className: "hidden md:table-cell",
     },
     {
@@ -27,21 +23,19 @@ const AnnouncementListPage = () => {
     },
   ];
 
-  const renderRow = (item: Announcement) => (
+  const renderRow = (item: Subject) => (
     <tr key={item.id} className="border-b border-gray-200 even:bg-slate-50 text-sm hover:bg-scholera-purple-light">
-      {/* Title */}
-      <td className="flex items-center gap-4 p-4">{item.title}</td>
-      {/* Class */}
-      <td>{item.class}</td>
-      {/* Date */}
-      <td className="hidden md:table-cell">{item.date}</td>
+      {/* Name */}
+      <td className="flex items-center gap-4 p-4">{item.name}</td>
+      {/* Teachers */}
+      <td className="hidden md:table-cell">{item.teachers.join(",")}</td>
       {/* Actions */}
       <td>
         <div className="flex items-center gap-2">
           {role === "admin" && (
             <>
-              {/* <FormModal table="announcement" type="update" data={item} /> */}
-              {/* <FormModal table="announcement" type="delete" id={item.id} /> */}
+              {/* <FormModal table="subject" type="update" data={item} /> */}
+              {/* <FormModal table="subject" type="delete" id={item.id} /> */}
             </>
           )}
         </div>
@@ -54,7 +48,7 @@ const AnnouncementListPage = () => {
       {/* Top - Header */}
       <div className="b-rose-500 flex items-center justify-between">
         {/* Title */}
-        <h1 className="hidden md:block text-lg font-semibold">All Announcements</h1>
+        <h1 className="hidden md:block text-lg font-semibold">All Subjects</h1>
 
         {/* Actions Button */}
         <div className="w-full md:w-auto flex flex-col md:flex-row items-center gap-4">
@@ -85,7 +79,7 @@ const AnnouncementListPage = () => {
       </div>
 
       {/* Middle - Table */}
-      <Table columns={columns} data={announcementData} renderRow={renderRow} />
+      <Table columns={columns} data={subjectsData} renderRow={renderRow} />
 
       {/* Bottom - Pagination */}
       <Pagination />
@@ -93,4 +87,4 @@ const AnnouncementListPage = () => {
   );
 };
 
-export default AnnouncementListPage;
+export default SubjectListPage;

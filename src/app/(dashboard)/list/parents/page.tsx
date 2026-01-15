@@ -2,9 +2,7 @@ import Pagination from "@/components/Pagination";
 import Table from "@/components/Table";
 import TableSearch from "@/components/TableSearch";
 import { parentsData } from "@/libs/constants";
-import { Filter, Plus, SortDesc, Trash, View } from "lucide-react";
-import Image from "next/image";
-import Link from "next/link";
+import { Filter, Plus, SortDesc } from "lucide-react";
 
 const ParentList = () => {
   const role = "admin";
