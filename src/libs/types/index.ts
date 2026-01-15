@@ -55,3 +55,11 @@ type Subject = {
   name: string;
   teachers: string[];
 };
+
+type Class = {
+  id: number;
+  name: string;
+  capacity: number;
+  grade: number;
+  supervisor: string;
+};
