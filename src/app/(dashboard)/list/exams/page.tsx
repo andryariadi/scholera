@@ -4,7 +4,7 @@ import TableSearch from "@/components/TableSearch";
 import { examsData } from "@/libs/constants";
 import { Filter, Plus, SortDesc } from "lucide-react";
 
-const ClassListPage = () => {
+const ExamListPage = () => {
   const role = "admin";
 
   const columns = [
@@ -100,4 +100,4 @@ const ClassListPage = () => {
   );
 };
 
-export default ClassListPage;
+export default ExamListPage;
