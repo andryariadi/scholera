@@ -78,3 +78,11 @@ type Exam = {
   teacher: string;
   date: string;
 };
+
+type Assignment = {
+  id: number;
+  subject: string;
+  class: string;
+  teacher: string;
+  dueDate: string;
+};
