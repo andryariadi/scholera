@@ -1,8 +1,9 @@
+import FormModal from "@/components/FormModal";
 import Pagination from "@/components/Pagination";
 import Table from "@/components/Table";
 import TableSearch from "@/components/TableSearch";
 import { resultsData } from "@/libs/constants";
-import { Filter, Plus, SortDesc } from "lucide-react";
+import { Filter, SortDesc } from "lucide-react";
 
 const ResultListPage = () => {
   const role = "admin";
@@ -62,8 +63,8 @@ const ResultListPage = () => {
           {role === "admin" ||
             (role === "teacher" && (
               <>
-                {/* <FormModal table="result" type="update" data={item} />
-              <FormModal table="result" type="delete" id={item.id} /> */}
+                <FormModal table="result" type="update" data={item} />
+                <FormModal table="result" type="delete" id={item.id} />
               </>
             ))}
         </div>
@@ -95,12 +96,11 @@ const ResultListPage = () => {
             </button>
 
             {/* Modal Button */}
-
             {role === "admin" && (
-              <button className="action-btn">
-                <Plus size={14} />
-              </button>
-              //   <FormModal table="teacher" type="create"/>
+              // <button className="action-btn">
+              //   <Plus size={14} />
+              // </button>
+              <FormModal table="result" type="create" />
             )}
           </div>
         </div>

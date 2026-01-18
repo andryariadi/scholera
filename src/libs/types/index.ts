@@ -10,6 +10,17 @@ interface TeacherColumns<T> {
   data: T[];
 }
 
+interface TableType {
+  type: "teacher" | "student" | "parent" | "announcement" | "subject" | "class" | "lesson" | "result" | "exam" | "assignment" | "event" | "attendance";
+}
+
+interface FormModal<T> {
+  table: TableType["type"];
+  type: "create" | "update" | "delete";
+  id?: number;
+  data?: T;
+}
+
 interface Teacher {
   id: number;
   teacherId: string;

@@ -7,7 +7,7 @@ import { ResponsiveContainer, RadialBarChart, RadialBar, Tooltip } from "rechart
 
 const StudentChart = () => {
   return (
-    <div className="bg-white w-full h-full p-4 rounded-xl">
+    <div className="bg-white shadow-xs w-full h-full p-4 rounded-xl">
       {/* Title */}
       <div className="flex justify-between items-center">
         <h1 className="text-lg font-semibold">Students</h1>

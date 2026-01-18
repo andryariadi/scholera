@@ -1,8 +1,9 @@
+import FormModal from "@/components/FormModal";
 import Pagination from "@/components/Pagination";
 import Table from "@/components/Table";
 import TableSearch from "@/components/TableSearch";
 import { teachersData } from "@/libs/constants";
-import { Filter, Plus, SortDesc, Trash, View } from "lucide-react";
+import { Filter, SortDesc, View } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
 
@@ -82,9 +83,10 @@ const TeacherListPage = () => {
 
           {/* Delete */}
           {role === "admin" && (
-            <button className="action-btn-table bg-scholera-purple">
-              <Trash size={16} />
-            </button>
+            // <button className="action-btn-table bg-scholera-purple">
+            //   <Trash size={16} />
+            // </button>
+            <FormModal table="teacher" type="delete" id={item.id} />
           )}
         </div>
       </td>
@@ -92,7 +94,7 @@ const TeacherListPage = () => {
   );
 
   return (
-    <section className="bg-white p-4 rounded-lg space-y-5 shadow-sm">
+    <section className="bg-white  shadow-xs p-4 rounded-lg space-y-5">
       {/* Top - Header */}
       <div className="b-rose-500 flex items-center justify-between">
         {/* Title */}
@@ -117,10 +119,10 @@ const TeacherListPage = () => {
             {/* Modal Button */}
 
             {role === "admin" && (
-              <button className="action-btn">
-                <Plus size={14} />
-              </button>
-              //   <FormModal table="teacher" type="create"/>
+              // <button className="action-btn">
+              //   <Plus size={14} />
+              // </button>
+              <FormModal table="teacher" type="create" />
             )}
           </div>
         </div>

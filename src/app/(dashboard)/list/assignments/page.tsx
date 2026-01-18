@@ -1,8 +1,9 @@
+import FormModal from "@/components/FormModal";
 import Pagination from "@/components/Pagination";
 import Table from "@/components/Table";
 import TableSearch from "@/components/TableSearch";
 import { assignmentsData } from "@/libs/constants";
-import { Filter, Plus, SortDesc } from "lucide-react";
+import { Filter, SortDesc } from "lucide-react";
 
 const AssignmentListPage = () => {
   const role = "admin";
@@ -48,8 +49,8 @@ const AssignmentListPage = () => {
           {role === "admin" ||
             (role === "teacher" && (
               <>
-                {/* <FormModal table="assignment" type="update" data={item} />
-              <FormModal table="assignment" type="delete" id={item.id} /> */}
+                <FormModal table="assignment" type="update" data={item} />
+                <FormModal table="assignment" type="delete" id={item.id} />
               </>
             ))}
         </div>
@@ -81,12 +82,11 @@ const AssignmentListPage = () => {
             </button>
 
             {/* Modal Button */}
-
             {role === "admin" && (
-              <button className="action-btn">
-                <Plus size={14} />
-              </button>
-              //   <FormModal table="teacher" type="create"/>
+              // <button className="action-btn">
+              //   <Plus size={14} />
+              // </button>
+              <FormModal table="assignment" type="create" />
             )}
           </div>
         </div>

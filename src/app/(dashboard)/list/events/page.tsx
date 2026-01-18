@@ -1,8 +1,9 @@
+import FormModal from "@/components/FormModal";
 import Pagination from "@/components/Pagination";
 import Table from "@/components/Table";
 import TableSearch from "@/components/TableSearch";
 import { eventData } from "@/libs/constants";
-import { Filter, Plus, SortDesc } from "lucide-react";
+import { Filter, SortDesc } from "lucide-react";
 
 const EventListPage = () => {
   const role = "admin";
@@ -54,8 +55,8 @@ const EventListPage = () => {
         <div className="flex items-center gap-2">
           {role === "admin" && (
             <>
-              {/* <FormModal table="event" type="update" data={item} />
-              <FormModal table="event" type="delete" id={item.id} /> */}
+              <FormModal table="event" type="update" data={item} />
+              <FormModal table="event" type="delete" id={item.id} />
             </>
           )}
         </div>
@@ -89,10 +90,10 @@ const EventListPage = () => {
             {/* Modal Button */}
 
             {role === "admin" && (
-              <button className="action-btn">
-                <Plus size={14} />
-              </button>
-              //   <FormModal table="teacher" type="create"/>
+              // <button className="action-btn">
+              //   <Plus size={14} />
+              // </button>
+              <FormModal table="event" type="create" />
             )}
           </div>
         </div>

@@ -3,8 +3,8 @@ import Image from "next/image";
 
 const Navbar = () => {
   return (
-    <nav className="b-amber-500 sticky top-0 z-40 py-2 px-5">
-      <div className="bg-white flex items-center justify-between z-50 bg-clip-padding backdrop-filter backdrop-blur-xl h-14 px-3 rounded-full">
+    <nav className="sticky top-0 z-40 py-2 px-5">
+      <div className="bg-white shadow-xs flex items-center justify-between z-50 bg-clip-padding backdrop-filter backdrop-blur-xl h-14 px-3 rounded-full">
         {/* SEARCH BAR */}
         <div className="hidden md:flex items-center gap-2 text-xs rounded-full ring-[1.5px] ring-gray-300 px-2">
           <Search size={16} className="text-gray-400 shrink-0" />
