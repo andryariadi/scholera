@@ -1,8 +1,21 @@
+"use client";
+
 import { menuItems } from "@/libs/constants";
 import Image from "next/image";
 import Link from "next/link";
+import { usePathname } from "next/navigation";
 
 const Sidebar = () => {
+  const pathName = usePathname();
+
+  // Function to check active path:
+  const isActivePath = (itemHref: string) => {
+    // Create regex pattern for the item
+    const pattern = new RegExp(`^${itemHref}(/.*)?$`);
+
+    return pattern.test(pathName);
+  };
+
   return (
     <aside className="space-y-5 h-full overflow-hidden scrollbar-hide">
       {/* Top - Logo */}
@@ -25,9 +38,15 @@ const Sidebar = () => {
             {/* Items */}
             <div>
               {i.items.map((item) => {
+                const isActive = isActivePath(item.href);
+
                 if (item.visible.includes("admin")) {
                   return (
-                    <Link href={item.href} key={item.label} className="flex items-center justify-center lg:justify-start gap-4 py-2 md:px-2 rounded-md hover:bg-scholera-sky-light text-gray-500">
+                    <Link
+                      href={item.href}
+                      key={item.label}
+                      className={`flex items-center justify-center lg:justify-start gap-4 py-2 md:px-2 rounded-md ${isActive ? "bg-scholera-sky-light" : ""} hover:bg-scholera-sky-light text-gray-500 transition-colors`}
+                    >
                       <item.icon size={16} className="shrink-0" />
                       <span className="hidden lg:block">{item.label}</span>
                     </Link>
