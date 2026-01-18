@@ -8,7 +8,7 @@ const bgVariant: Record<string, string> = {
 
 const Announcements = () => {
   return (
-    <div className="bg-white p-4 rounded-md space-y-4">
+    <div className="bg-white shadow-xs p-4 rounded-md space-y-4">
       {/* Header */}
       <div className="flex items-center justify-between">
         <h1 className="text-xl font-semibold">Announcements</h1>

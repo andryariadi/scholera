@@ -6,7 +6,7 @@ import { BarChart, Legend, XAxis, YAxis, CartesianGrid, Tooltip, Bar, Responsive
 
 const AttendanceChart = () => {
   return (
-    <div className="bg-white w-full h-full p-4 rounded-xl">
+    <div className="bg-white shadow-xs w-full h-full p-4 rounded-xl">
       {/* Title */}
       <div className="flex justify-between items-center">
         <h1 className="text-lg font-semibold">Attendance</h1>

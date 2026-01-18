@@ -14,7 +14,7 @@ const EvCalendar = () => {
   const [value, onChange] = useState<Value>(new Date());
 
   return (
-    <div className="bg-white w-fulll p-4 rounded-xl space-y-3">
+    <div className="bg-white shadow-xs w-fulll p-4 rounded-xl space-y-3">
       {/* Calendar */}
       <Calendar onChange={onChange} value={value} className="w-full! border-none!" />
 

@@ -1,8 +1,9 @@
+import FormModal from "@/components/FormModal";
 import Pagination from "@/components/Pagination";
 import Table from "@/components/Table";
 import TableSearch from "@/components/TableSearch";
 import { parentsData } from "@/libs/constants";
-import { Filter, Plus, SortDesc } from "lucide-react";
+import { Filter, SortDesc } from "lucide-react";
 
 const ParentList = () => {
   const role = "admin";
@@ -34,7 +35,7 @@ const ParentList = () => {
   ];
 
   const renderRow = (item: Parent) => (
-    <tr key={item.id} className="b-sky-600 border-b border-gray-200 even:bg-slate-50 text-sm hover:bg-scholera-purple-light">
+    <tr key={item.id} className="border-b border-gray-200 even:bg-slate-50 text-sm hover:bg-scholera-purple-light">
       {/* Info */}
       <td className="flex items-center gap-4 p-4">
         <div className="flex flex-col">
@@ -52,8 +53,8 @@ const ParentList = () => {
         <div className="flex items-center gap-2">
           {role === "admin" && (
             <>
-              {/* <FormModal table="parent" type="update" data={item} /> */}
-              {/* <FormModal table="parent" type="delete" id={item.id} /> */}
+              <FormModal table="parent" type="update" data={item} />
+              <FormModal table="parent" type="delete" id={item.id} />
             </>
           )}
         </div>
@@ -62,9 +63,9 @@ const ParentList = () => {
   );
 
   return (
-    <section className="bg-white p-4 rounded-lg space-y-5 shadow-sm">
+    <section className="bg-white shadow-xs p-4 rounded-lg space-y-5">
       {/* Top - Header */}
-      <div className="b-rose-500 flex items-center justify-between">
+      <div className="flex items-center justify-between">
         {/* Title */}
         <h1 className="hidden md:block text-lg font-semibold">All Parents</h1>
 
@@ -85,12 +86,11 @@ const ParentList = () => {
             </button>
 
             {/* Modal Button */}
-
             {role === "admin" && (
-              <button className="action-btn">
-                <Plus size={14} />
-              </button>
-              //   <FormModal table="teacher" type="create"/>
+              // <button className="action-btn">
+              //   <Plus size={14} />
+              // </button>
+              <FormModal table="parent" type="create" />
             )}
           </div>
         </div>

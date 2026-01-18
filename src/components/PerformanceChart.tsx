@@ -1,8 +1,7 @@
 "use client";
 
 import { Ellipsis } from "lucide-react";
-import Image from "next/image";
-import { PieChart, Pie, Sector, Cell, ResponsiveContainer } from "recharts";
+import { PieChart, Pie, ResponsiveContainer } from "recharts";
 
 const data = [
   { name: "Group A", value: 92, fill: "#C3EBFA" },
@@ -11,7 +10,7 @@ const data = [
 
 const PerformanceChart = () => {
   return (
-    <div className="bg-white relative h-80 p-4 rounded-md">
+    <div className="bg-white shadow-xs relative h-80 p-4 rounded-md">
       {/* Title */}
       <div className="flex items-center justify-between">
         <h1 className="text-lg font-semibold">Performance</h1>

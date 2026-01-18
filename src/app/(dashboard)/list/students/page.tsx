@@ -1,8 +1,9 @@
+import FormModal from "@/components/FormModal";
 import Pagination from "@/components/Pagination";
 import Table from "@/components/Table";
 import TableSearch from "@/components/TableSearch";
 import { studentData } from "@/libs/constants";
-import { Filter, Plus, SortDesc, Trash, View } from "lucide-react";
+import { Filter, SortDesc, View } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
 
@@ -71,9 +72,10 @@ const StudentListPage = () => {
 
           {/* Delete */}
           {role === "admin" && (
-            <button className="action-btn-table bg-scholera-purple">
-              <Trash size={16} />
-            </button>
+            // <button className="action-btn-table bg-scholera-purple">
+            //   <Trash size={16} />
+            // </button>
+            <FormModal table="student" type="delete" id={item.id} />
           )}
         </div>
       </td>
@@ -81,9 +83,9 @@ const StudentListPage = () => {
   );
 
   return (
-    <section className="bg-white p-4 rounded-lg space-y-5 shadow-sm">
+    <section className="bg-white  shadow-sm p-4 rounded-lg space-y-5">
       {/* Top - Header */}
-      <div className="b-rose-500 flex items-center justify-between">
+      <div className="flex items-center justify-between">
         {/* Title */}
         <h1 className="hidden md:block text-lg font-semibold">All Students</h1>
 
@@ -104,12 +106,11 @@ const StudentListPage = () => {
             </button>
 
             {/* Modal Button */}
-
             {role === "admin" && (
-              <button className="action-btn">
-                <Plus size={14} />
-              </button>
-              //   <FormModal table="teacher" type="create"/>
+              // <button className="action-btn">
+              //   <Plus size={14} />
+              // </button>
+              <FormModal table="student" type="create" />
             )}
           </div>
         </div>
