@@ -1,0 +1,289 @@
+generator client {
+  provider = "prisma-client"
+  output   = "../src/generated/prisma"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+model Admin {
+  id       String @id @default(uuid())
+  username String @unique
+}
+
+model Student {
+  id        String   @id @default(uuid())
+  username  String   @unique
+  name      String
+  surname   String
+  email     String?  @unique
+  phone     String?  @unique
+  address   String
+  img       String?
+  bloodType String
+  sex       UserSex
+  birthday  DateTime
+  createdAt DateTime @default(now())
+
+  // Foregin Key (FK):
+  parentId String
+  parent   Parent @relation(fields: [parentId], references: [id])
+
+  classId String
+  class   Class  @relation(fields: [classId], references: [id])
+
+  gradeId String
+  grade   Grade  @relation(fields: [gradeId], references: [id])
+
+  // One to many:
+  attendances Attendance[]
+  results     Result[]
+
+  // Indexes untuk optimasi query:
+  @@index([parentId]) // Cari semua siswa dari parent tertentu
+  @@index([classId]) // Cari semua siswa di kelas tertentu
+  @@index([gradeId]) // Cari semua siswa di grade tertentu
+  @@index([createdAt]) // Sorting berdasarkan tanggal registrasi
+  @@index([name, surname]) // Pencarian nama siswa (full name search)
+  @@index([classId, gradeId]) // Composite index untuk filter kelas + grade
+}
+
+model Teacher {
+  id        String   @id @default(uuid())
+  username  String   @unique
+  name      String
+  surname   String
+  email     String?  @unique
+  phone     String?  @unique
+  address   String
+  img       String?
+  bloodType String
+  sex       UserSex
+  birthday  DateTime
+  createdAt DateTime @default(now())
+
+  // Many to many:
+  subjects Subject[]
+
+  // One to many:
+  lessons Lesson[]
+  classes Class[]
+
+  @@index([createdAt])
+  @@index([name, surname]) // Pencarian nama guru
+}
+
+model Parent {
+  id        String   @id @default(uuid())
+  username  String   @unique
+  name      String
+  surname   String
+  email     String?  @unique
+  phone     String   @unique
+  address   String
+  createdAt DateTime @default(now())
+
+  // One to many
+  students Student[]
+
+  @@index([createdAt])
+  @@index([name, surname])
+}
+
+model Grade {
+  id    String @id @default(uuid())
+  level Int    @unique
+
+  // One to many:
+  students Student[]
+  classess Class[]
+}
+
+model Class {
+  id       String @id @default(uuid())
+  name     String @unique
+  capacity Int
+
+  // Foregin Key (FK):
+  supervisorId String?
+  supervisor   Teacher? @relation(fields: [supervisorId], references: [id])
+
+  gradeId String
+  grade   Grade  @relation(fields: [gradeId], references: [id])
+
+  // One to many:
+  lessons       Lesson[]
+  students      Student[]
+  events        Event[]
+  announcements Announcement[]
+
+  @@index([supervisorId]) // Cari kelas berdasarkan supervisor
+  @@index([gradeId]) // Cari kelas berdasarkan grade
+}
+
+model Subject {
+  id   String @id @default(uuid())
+  name String @unique
+
+  // Many to many:
+  teachers Teacher[]
+
+  // One to many:
+  lessons Lesson[]
+}
+
+model Lesson {
+  id        String   @id @default(uuid())
+  name      String
+  day       Day
+  startTime DateTime
+  endTime   DateTime
+
+  // Foregin Key (FK):
+  subjectId String
+  subject   Subject @relation(fields: [subjectId], references: [id])
+
+  classId String
+  class   Class  @relation(fields: [classId], references: [id])
+
+  teacherId String
+  teacher   Teacher @relation(fields: [teacherId], references: [id])
+
+  // One to many:
+  exams       Exam[]
+  assignments Assignment[]
+  attendances Attendance[]
+
+  // Indexes untuk query jadwal dan attendance:
+  @@index([classId]) // Jadwal per kelas
+  @@index([teacherId]) // Jadwal per guru
+  @@index([subjectId]) // Semua lesson untuk subject tertentu
+  @@index([day]) // Filter berdasarkan hari
+  @@index([classId, day]) // Jadwal kelas di hari tertentu
+  @@index([startTime, endTime]) // Filter berdasarkan waktu
+}
+
+model Exam {
+  id        String   @id @default(uuid())
+  title     String
+  startTime DateTime
+  endTime   DateTime
+
+  // Foregin Key (FK)
+  lessonId String
+  lesson   Lesson @relation(fields: [lessonId], references: [id])
+
+  // One to many
+  results Result[]
+
+  @@index([lessonId]) // Semua exam untuk lesson tertentu
+  @@index([startTime]) // Upcoming exams
+  @@index([startTime, endTime]) // Exam dalam range waktu tertentu
+}
+
+model Assignment {
+  id        String   @id @default(uuid())
+  title     String
+  startDate DateTime
+  dueDate   DateTime
+
+  // Foregin Key (FK)
+  lessonId String
+  lesson   Lesson @relation(fields: [lessonId], references: [id])
+
+  // One to many
+  results Result[]
+
+  @@index([lessonId]) // Semua assignment untuk lesson tertentu
+  @@index([dueDate]) // Upcoming/overdue assignments
+  @@index([startDate, dueDate]) // Assignment dalam range waktu
+}
+
+model Result {
+  id    String @id @default(uuid())
+  score Int
+
+  // Foregin Key (FK)
+  examId String?
+  exam   Exam?   @relation(fields: [examId], references: [id])
+
+  assignmentId String?
+  assignment   Assignment? @relation(fields: [assignmentId], references: [id])
+
+  studentId String
+  student   Student @relation(fields: [studentId], references: [id])
+
+  // Indexes untuk query nilai siswa
+  @@index([studentId]) // Semua nilai siswa tertentu
+  @@index([examId]) // Semua nilai untuk exam tertentu
+  @@index([assignmentId]) // Semua nilai untuk assignment tertentu
+  @@index([studentId, examId]) // Nilai siswa untuk exam spesifik
+  @@index([studentId, assignmentId]) // Nilai siswa untuk assignment spesifik
+  @@index([score]) // Ranking/sorting berdasarkan nilai
+}
+
+model Attendance {
+  id      String   @id @default(uuid())
+  date    DateTime
+  present Boolean
+
+  // Foregin Key (FK):
+  studentId String
+  student   Student @relation(fields: [studentId], references: [id])
+
+  lessonId String
+  lesson   Lesson @relation(fields: [lessonId], references: [id])
+
+  // Indexes untuk query presensi
+  @@index([studentId]) // Riwayat presensi siswa
+  @@index([lessonId]) // Presensi per lesson
+  @@index([date]) // Presensi di tanggal tertentu
+  @@index([studentId, date]) // Presensi siswa di tanggal tertentu
+  @@index([lessonId, date]) // Presensi lesson di tanggal tertentu
+  @@index([present]) // Filter hadir/tidak hadir
+  @@index([studentId, present]) // Statistik kehadiran siswa
+}
+
+model Event {
+  id          String   @id @default(uuid())
+  title       String
+  description String
+  startTime   DateTime
+  endTime     DateTime
+
+  // Foregin Key (FK)
+  classId String?
+  class   Class?  @relation(fields: [classId], references: [id])
+
+  @@index([classId]) // Event per kelas
+  @@index([startTime]) // Upcoming events
+  @@index([startTime, endTime]) // Event dalam range waktu
+}
+
+model Announcement {
+  id          String   @id @default(uuid())
+  title       String
+  description String
+  date        DateTime
+
+  // Foregin Key (FK)
+  classId String?
+  class   Class?  @relation(fields: [classId], references: [id])
+
+  @@index([classId]) // Announcement per kelas
+  @@index([date]) // Announcement terbaru/sorting
+}
+
+enum UserSex {
+  MALE
+  FEMALE
+}
+
+enum Day {
+  MONDAY
+  TUESDAY
+  WEDNESDAY
+  THURSDAY
+  FRIDAY
+}
