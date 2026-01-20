@@ -9,6 +9,18 @@ export const formatDate = (dateString: Date) => {
   return `${day} ${month} ${year}`;
 };
 
+export const formatDateISO = (dateInput: Date | string) => {
+  if (typeof dateInput === "string") {
+    return dateInput.split("T")[0];
+  }
+
+  const year = dateInput.getFullYear();
+  const month = String(dateInput.getMonth() + 1).padStart(2, "0");
+  const day = String(dateInput.getDate()).padStart(2, "0");
+
+  return `${year}-${month}-${day}`;
+};
+
 const getLatestMonday = (): Date => {
   const today = new Date();
   const dayOfWeek = today.getDay();

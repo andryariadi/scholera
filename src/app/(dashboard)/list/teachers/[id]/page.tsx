@@ -1,13 +1,13 @@
 import Announcements from "@/components/Announcement";
 import BigCalendarContainer from "@/components/BigCalendarContainer";
 import PerformanceChart from "@/components/PerformanceChart";
+import AnnouncementsSkeleton from "@/components/skeletons/AnnouncementSkeleton";
 import ShortcutsSkeleton from "@/components/skeletons/ShortcutsSkeleton";
 import TeacherProfileSkeleton from "@/components/skeletons/TeacherProfileSkeleton";
 import TeacherScheduleSkeleton from "@/components/skeletons/TeacherScheduleSkeleton";
 import { getTeacher } from "@/libs/data/fetch-teachers";
 import { formatDate } from "@/libs/utils";
 import { CalendarDays, Mail, Phone } from "lucide-react";
-import { cacheLife } from "next/cache";
 import Image from "next/image";
 import Link from "next/link";
 import { Suspense } from "react";
@@ -116,9 +116,6 @@ async function TeacherProfileSection({ params }: { params: Promise<{ id: string 
 }
 
 async function TeacherScheduleSection({ params }: { params: Promise<{ id: string }> }) {
-  "use cache";
-  cacheLife("max");
-
   const { id } = await params;
 
   const teacher = await getTeacher(id);
@@ -189,7 +186,9 @@ const TeacherDetailPage = ({ params }: { params: Promise<{ id: string }> }) => {
         <PerformanceChart />
 
         {/* Announcements */}
-        <Announcements />
+        <Suspense fallback={<AnnouncementsSkeleton />}>
+          <Announcements />
+        </Suspense>
       </div>
     </section>
   );

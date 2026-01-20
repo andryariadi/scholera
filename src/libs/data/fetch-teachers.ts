@@ -135,7 +135,7 @@ export const getTeachers = async (params: GetTeachersParams = {}): Promise<GetTe
       },
     };
   } catch (error) {
-    console.error("Error in getTeachers:", error);
+    console.log("Error in fetching teachers:", error);
     return {
       data: [],
       pagination: {
