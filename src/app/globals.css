@@ -68,7 +68,7 @@
   }
 
   .user-info {
-    @apply w-full md:w-[48%] lg:w-full 2xl:w-[48%] flex items-center gap-2 text-nowrap;
+    @apply w-full md:w-[48%] lg:w-full 2xl:w-[48%] flex items-center gap-2 text-wrap;
   }
 
   .user-performance {
