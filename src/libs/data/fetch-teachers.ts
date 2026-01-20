@@ -1,6 +1,7 @@
 import { Prisma } from "@/generated/prisma/client";
 import prisma from "../config/prisma";
 import { TeacherList } from "../types/prisma-schema";
+import { cacheLife, cacheTag } from "next/cache";
 
 export interface GetTeachersParams {
   // Pagination
@@ -35,6 +36,10 @@ export interface GetTeachersResponse {
 }
 
 export const getTeachers = async (params: GetTeachersParams = {}): Promise<GetTeachersResponse> => {
+  "use cache";
+  cacheLife("hours");
+  cacheTag("teachers", `teachers-page-${params.page || 1}`);
+
   try {
     // Default values for params:
     const { page = 1, limit = 10, search = "", classId, subjectId, sex, bloodType, sortBy = "createdAt", sortOrder = "desc" } = params;
@@ -145,7 +150,11 @@ export const getTeachers = async (params: GetTeachersParams = {}): Promise<GetTe
   }
 };
 
-export const getTeacherById = async (id: string): Promise<TeacherList | null> => {
+export const getTeacher = async (id: string): Promise<TeacherList | null> => {
+  // "use cache";
+  // cacheLife("hours");
+  // cacheTag("teacher", `teacher-${id}`);
+
   try {
     const teacher = await prisma.teacher.findUnique({
       where: { id },
