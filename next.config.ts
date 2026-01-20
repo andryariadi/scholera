@@ -6,6 +6,7 @@ const nextConfig: NextConfig = {
     root: path.join(__dirname, ".."),
   },
   reactCompiler: true,
+  cacheComponents: true,
   images: {
     remotePatterns: [
       {

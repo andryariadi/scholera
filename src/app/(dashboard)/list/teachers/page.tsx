@@ -2,12 +2,15 @@ import FormModal from "@/components/FormModal";
 import Pagination from "@/components/Pagination";
 import Table from "@/components/Table";
 import TableSearch from "@/components/TableSearch";
-import { teachersData } from "@/libs/constants";
+import { getTeachers } from "@/libs/data/fetch-teachers";
+import { TeacherList } from "@/libs/types/prisma-schema";
 import { Filter, SortDesc, View } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
 
-const TeacherListPage = () => {
+const TeacherListPage = async () => {
+  const teachersRes = await getTeachers({});
+
   const role = "admin";
 
   const columns = [
@@ -50,11 +53,13 @@ const TeacherListPage = () => {
       : []),
   ];
 
-  const renderRow = (item: Teacher) => (
+  console.log({ teachersRes }, "<---teachersTable");
+
+  const renderRow = (item: TeacherList) => (
     <tr key={item.id} className="b-sky-600 border-b border-gray-200 even:bg-slate-50 text-sm hover:bg-scholera-purple-light">
       {/* Info */}
       <td className="flex items-center gap-4 p-4">
-        <Image src={item.photo} alt="" width={40} height={40} className="md:hidden xl:block w-10 h-10 rounded-full object-cover" />
+        <Image src={item?.img || "/avatar.png"} alt={item.username} width={40} height={40} className="md:hidden xl:block w-10 h-10 rounded-full object-cover" />
 
         <div className="flex flex-col">
           <h3 className="font-semibold">{item.name}</h3>
@@ -62,11 +67,11 @@ const TeacherListPage = () => {
         </div>
       </td>
       {/* Teacher-ID */}
-      <td className="hidden md:table-cell">{item.teacherId}</td>
+      <td className="hidden md:table-cell">{item.id}</td>
       {/* Subjects */}
-      <td className="hidden md:table-cell">{item.subjects.join(", ")}</td>
+      <td className="hidden md:table-cell">{item.subjects.map((subject) => subject.name).join(", ")}</td>
       {/* Classes */}
-      <td className="hidden md:table-cell">{item.classes.join(", ")}</td>
+      <td className="hidden md:table-cell">{item.classes.map((subject) => subject.name).join(", ")}</td>
       {/* Phone */}
       <td className="hidden md:table-cell">{item.phone}</td>
       {/* Address */}
@@ -129,7 +134,7 @@ const TeacherListPage = () => {
       </div>
 
       {/* Middle - Table */}
-      <Table columns={columns} data={teachersData} renderRow={renderRow} />
+      <Table columns={columns} data={teachersRes.data} renderRow={renderRow} />
 
       {/* Bottom - Pagination */}
       <Pagination />

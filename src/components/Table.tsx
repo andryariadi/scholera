@@ -1,3 +1,5 @@
+import { TeacherColumns } from "@/libs/types/prisma-schema";
+
 const Table = <T,>({ columns, data, renderRow }: TeacherColumns<T>) => {
   return (
     <table className="w-full">
