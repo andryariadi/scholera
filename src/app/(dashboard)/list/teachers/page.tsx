@@ -1,11 +1,13 @@
-import TeacherFilters from "@/components/Filter";
 import FormModal from "@/components/FormModal";
 import TableSearchSkeleton from "@/components/skeletons/SearchBarSkeleton";
 import { TeacherListSkeleton } from "@/components/skeletons/TeacherTableSkeleton";
-import TeacherSort from "@/components/Sort";
 import TableSearch from "@/components/TableSearch";
 import { TeacherListContent } from "@/components/TeacherListContent";
 import { Suspense } from "react";
+import TableFilter from "@/components/TableFilter";
+import { teacherFilterConfig } from "@/libs/config/filter-configs";
+import TableSort from "@/components/TableSort";
+import { teacherSortOptions } from "@/libs/config/sort-config";
 
 interface TeacherListPageProps {
   searchParams: Promise<{
@@ -37,10 +39,9 @@ export default function TeacherListPage({ searchParams }: TeacherListPageProps) 
           </Suspense>
 
           <div className="flex items-center gap-4 self-end">
-            <TeacherFilters />
+            <TableFilter filters={teacherFilterConfig} title="Teacher Filters" />
 
-            <TeacherSort />
-
+            <TableSort options={teacherSortOptions} />
             {role === "admin" && <FormModal table="teacher" type="create" />}
           </div>
         </div>
