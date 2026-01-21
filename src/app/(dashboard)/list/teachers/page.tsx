@@ -2,9 +2,9 @@ import TeacherFilters from "@/components/Filter";
 import FormModal from "@/components/FormModal";
 import TableSearchSkeleton from "@/components/skeletons/SearchBarSkeleton";
 import { TeacherListSkeleton } from "@/components/skeletons/TeacherTableSkeleton";
+import TeacherSort from "@/components/Sort";
 import TableSearch from "@/components/TableSearch";
 import { TeacherListContent } from "@/components/TeacherListContent";
-import { SortDesc } from "lucide-react";
 import { Suspense } from "react";
 
 interface TeacherListPageProps {
@@ -16,7 +16,7 @@ interface TeacherListPageProps {
     subjectId?: string;
     sex?: "MALE" | "FEMALE";
     bloodType?: string;
-    sortBy?: "name" | "surname" | "email" | "createdAt";
+    sortBy?: "name" | "surname" | "subjects" | "subjectCount" | "createdAt";
     sortOrder?: "asc" | "desc";
   }>;
 }
@@ -39,9 +39,7 @@ export default function TeacherListPage({ searchParams }: TeacherListPageProps) 
           <div className="flex items-center gap-4 self-end">
             <TeacherFilters />
 
-            <button className="action-btn">
-              <SortDesc size={14} />
-            </button>
+            <TeacherSort />
 
             {role === "admin" && <FormModal table="teacher" type="create" />}
           </div>

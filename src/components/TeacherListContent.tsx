@@ -16,7 +16,7 @@ interface TeacherListContentProps {
     subjectId?: string;
     sex?: "MALE" | "FEMALE";
     bloodType?: string;
-    sortBy?: "name" | "surname" | "email" | "createdAt";
+    sortBy?: "name" | "surname" | "subjects" | "subjectCount" | "createdAt";
     sortOrder?: "asc" | "desc";
   }>;
 }
@@ -37,6 +37,7 @@ export async function TeacherListContent({ searchParams }: TeacherListContentPro
   };
 
   const teachersRes = await getTeachers(queryParams);
+
   const role = "admin";
 
   const columns = [
@@ -70,6 +71,7 @@ export async function TeacherListContent({ searchParams }: TeacherListContentPro
               <View size={16} />
             </button>
           </Link>
+
           {role === "admin" && <FormModal table="teacher" type="delete" id={item.id} />}
         </div>
       </td>
@@ -82,7 +84,14 @@ export async function TeacherListContent({ searchParams }: TeacherListContentPro
       <Table columns={columns} data={teachersRes.data} renderRow={renderRow} />
 
       {/* Pagination */}
-      <Pagination />
+      <Pagination
+        total={teachersRes.pagination.total}
+        page={teachersRes.pagination.page}
+        limit={teachersRes.pagination.limit}
+        totalPages={teachersRes.pagination.totalPages}
+        hasNext={teachersRes.pagination.hasNext}
+        hasPrev={teachersRes.pagination.hasPrev}
+      />
     </>
   );
 }

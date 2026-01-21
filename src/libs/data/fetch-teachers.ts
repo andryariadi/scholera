@@ -18,7 +18,7 @@ export interface GetTeachersParams {
   bloodType?: string;
 
   // Sorting
-  sortBy?: "name" | "surname" | "email" | "createdAt";
+  sortBy?: "name" | "surname" | "subjects" | "subjectCount" | "createdAt";
   sortOrder?: "asc" | "desc";
 }
 
@@ -42,9 +42,16 @@ export const getTeachers = async (params: GetTeachersParams = {}): Promise<GetTe
 
   try {
     // Default values for params:
-    const { page = 1, limit = 10, search = "", classId, subjectId, sex, bloodType, sortBy = "createdAt", sortOrder = "desc" } = params;
+    const { page = 1, limit = 10, search = "", classId, subjectId, sex: rawSex, bloodType, sortBy = "createdAt", sortOrder = "desc" } = params;
 
-    console.log({ sex });
+    let sex: "MALE" | "FEMALE" | undefined;
+    if (rawSex) {
+      const normalizedSex = rawSex.toUpperCase();
+
+      if (normalizedSex === "MALE" || normalizedSex === "FEMALE") {
+        sex = normalizedSex as "MALE" | "FEMALE";
+      }
+    }
 
     // Validasi:
     const validPage = Math.max(1, page);
@@ -59,7 +66,6 @@ export const getTeachers = async (params: GetTeachersParams = {}): Promise<GetTe
       where.OR = [
         { name: { contains: search, mode: "insensitive" } },
         { surname: { contains: search, mode: "insensitive" } },
-        { email: { contains: search, mode: "insensitive" } },
         { username: { contains: search, mode: "insensitive" } },
         { address: { contains: search, mode: "insensitive" } },
         { subjects: { some: { name: { contains: search, mode: "insensitive" } } } },
@@ -80,7 +86,6 @@ export const getTeachers = async (params: GetTeachersParams = {}): Promise<GetTe
       };
     }
 
-    // Filter by gender:
     if (sex) {
       where.sex = sex;
     }
@@ -91,9 +96,29 @@ export const getTeachers = async (params: GetTeachersParams = {}): Promise<GetTe
     }
 
     // ORDER By:
-    const orderBy: Prisma.TeacherOrderByWithRelationInput = {
-      [sortBy]: sortOrder,
-    };
+    let orderBy: Prisma.TeacherOrderByWithRelationInput = {};
+
+    if (sortBy === "subjects") {
+      // Untuk sorting berdasarkan subjects, kita perlu pendekatan berbeda
+      // Kita akan sorting berdasarkan nama subject pertama
+      orderBy = {
+        subjects: {
+          _count: sortOrder === "desc" ? "desc" : "asc",
+        },
+      };
+    } else if (sortBy === "subjectCount") {
+      // Sorting berdasarkan jumlah subjects:
+      orderBy = {
+        subjects: {
+          _count: sortOrder === "desc" ? "desc" : "asc",
+        },
+      };
+    } else {
+      // Sorting biasa untuk field yang ada di tabel teacher:
+      orderBy = {
+        [sortBy]: sortOrder,
+      };
+    }
 
     // Execute queries:
     const [teachers, total] = await Promise.all([
@@ -154,10 +179,6 @@ export const getTeachers = async (params: GetTeachersParams = {}): Promise<GetTe
 };
 
 export const getTeacher = async (id: string): Promise<TeacherList | null> => {
-  // "use cache";
-  // cacheLife("hours");
-  // cacheTag("teacher", `teacher-${id}`);
-
   try {
     const teacher = await prisma.teacher.findUnique({
       where: { id },

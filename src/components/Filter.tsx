@@ -65,7 +65,7 @@ function TeacherFiltersContent() {
           {/* Filter Panel */}
           <div className="absolute right-0 top-12 z-50 w-80 bg-white rounded-lg shadow-lg border border-gray-200 p-4 space-y-4">
             {/* Header */}
-            <div className="flex items-center justify-between pb-3 border-b">
+            <div className="flex items-center justify-between">
               <h3 className="font-semibold text-gray-800">Filters</h3>
               <button onClick={() => setIsOpen(false)} className="text-gray-400 hover:text-gray-600">
                 <X size={18} />
@@ -77,8 +77,8 @@ function TeacherFiltersContent() {
               <label className="block text-sm font-medium text-gray-700 mb-2">Gender</label>
               <select value={currentSex} onChange={(e) => handleFilterChange("sex", e.target.value)} className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 text-sm">
                 <option value="">All</option>
-                <option value="MALE">Male</option>
-                <option value="FEMALE">Female</option>
+                <option value="male">Male</option>
+                <option value="female">Female</option>
               </select>
             </div>
 
@@ -99,7 +99,7 @@ function TeacherFiltersContent() {
             </div>
 
             {/* Actions */}
-            <div className="flex items-center gap-2 pt-3 border-t">
+            <div className="flex items-center gap-2">
               <button onClick={clearFilters} className="flex-1 px-4 py-2 text-sm font-medium text-gray-700 bg-gray-100 rounded-lg hover:bg-gray-200 transition-colors">
                 Clear All
               </button>
