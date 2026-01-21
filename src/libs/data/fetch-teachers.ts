@@ -44,6 +44,8 @@ export const getTeachers = async (params: GetTeachersParams = {}): Promise<GetTe
     // Default values for params:
     const { page = 1, limit = 10, search = "", classId, subjectId, sex, bloodType, sortBy = "createdAt", sortOrder = "desc" } = params;
 
+    console.log({ sex });
+
     // Validasi:
     const validPage = Math.max(1, page);
     const validLimit = Math.min(Math.max(1, limit), 100);
@@ -60,6 +62,7 @@ export const getTeachers = async (params: GetTeachersParams = {}): Promise<GetTe
         { email: { contains: search, mode: "insensitive" } },
         { username: { contains: search, mode: "insensitive" } },
         { address: { contains: search, mode: "insensitive" } },
+        { subjects: { some: { name: { contains: search, mode: "insensitive" } } } },
       ];
     }
 

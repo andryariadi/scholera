@@ -11,7 +11,7 @@ interface TableType {
 interface FormModal<T> {
   table: TableType["type"];
   type: "create" | "update" | "delete";
-  id?: string;
+  id?: string | number;
   data?: T;
 }
 

@@ -1,8 +1,10 @@
+import TeacherFilters from "@/components/Filter";
 import FormModal from "@/components/FormModal";
+import TableSearchSkeleton from "@/components/skeletons/SearchBarSkeleton";
 import { TeacherListSkeleton } from "@/components/skeletons/TeacherTableSkeleton";
 import TableSearch from "@/components/TableSearch";
 import { TeacherListContent } from "@/components/TeacherListContent";
-import { Filter, SortDesc } from "lucide-react";
+import { SortDesc } from "lucide-react";
 import { Suspense } from "react";
 
 interface TeacherListPageProps {
@@ -30,14 +32,17 @@ export default function TeacherListPage({ searchParams }: TeacherListPageProps) 
 
         {/* Search & Actions */}
         <div className="w-full md:w-auto flex flex-col md:flex-row items-center gap-4">
-          <TableSearch />
+          <Suspense fallback={<TableSearchSkeleton />}>
+            <TableSearch />
+          </Suspense>
+
           <div className="flex items-center gap-4 self-end">
-            <button className="action-btn">
-              <Filter size={14} />
-            </button>
+            <TeacherFilters />
+
             <button className="action-btn">
               <SortDesc size={14} />
             </button>
+
             {role === "admin" && <FormModal table="teacher" type="create" />}
           </div>
         </div>
