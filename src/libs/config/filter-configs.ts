@@ -1,4 +1,15 @@
-import { FilterOption } from "@/components/TableFilter";
+export interface FilterOption {
+  key: string;
+  label: string;
+  type: "select" | "text" | "date";
+  options?: { value: string | number; label: string }[];
+  placeholder?: string;
+}
+
+export interface TableFilterContentProps {
+  filters: FilterOption[];
+  title?: string;
+}
 
 // Teachers Filter Configuration:
 export const teacherFilterConfig: FilterOption[] = [
@@ -12,19 +23,21 @@ export const teacherFilterConfig: FilterOption[] = [
     ],
   },
   {
-    key: "bloodType",
-    label: "Blood Type",
+    key: "subject",
+    label: "Subject",
     type: "select",
     options: [
-      { value: "A+", label: "A+" },
-      { value: "A-", label: "A-" },
-      { value: "B+", label: "B+" },
-      { value: "B-", label: "B-" },
-      { value: "AB+", label: "AB+" },
-      { value: "AB-", label: "AB-" },
-      { value: "O+", label: "O+" },
-      { value: "O-", label: "O-" },
-    ],
+      { value: "Mathematics", label: "Mathematics" },
+      { value: "Science", label: "Science" },
+      { value: "English", label: "English" },
+      { value: "History", label: "History" },
+      { value: "Geography", label: "Geography" },
+      { value: "Physics", label: "Physics" },
+      { value: "Chemistry", label: "Chemistry" },
+      { value: "Biology", label: "Biology" },
+      { value: "Computer Science", label: "Computer Science" },
+      { value: "Art", label: "Art" },
+    ], // Much better to if options fetch from API
   },
 ];
 
@@ -40,22 +53,7 @@ export const studentFilterConfig: FilterOption[] = [
     ],
   },
   {
-    key: "bloodType",
-    label: "Blood Type",
-    type: "select",
-    options: [
-      { value: "A+", label: "A+" },
-      { value: "A-", label: "A-" },
-      { value: "B+", label: "B+" },
-      { value: "B-", label: "B-" },
-      { value: "AB+", label: "AB+" },
-      { value: "AB-", label: "AB-" },
-      { value: "O+", label: "O+" },
-      { value: "O-", label: "O-" },
-    ],
-  },
-  {
-    key: "gradeId",
+    key: "grade",
     label: "Grade",
     type: "select",
     options: [
@@ -66,12 +64,6 @@ export const studentFilterConfig: FilterOption[] = [
       { value: "5", label: "Grade 5" },
       { value: "6", label: "Grade 6" },
     ],
-  },
-  {
-    key: "classId",
-    label: "Class",
-    type: "select",
-    options: [],
   },
 ];
 

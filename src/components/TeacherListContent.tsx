@@ -1,3 +1,4 @@
+import { TeacherListPageProps } from "@/app/(dashboard)/list/teachers/page";
 import FormModal from "@/components/FormModal";
 import Pagination from "@/components/Pagination";
 import Table from "@/components/Table";
@@ -7,29 +8,14 @@ import { View } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
 
-interface TeacherListContentProps {
-  searchParams: Promise<{
-    page?: string;
-    limit?: string;
-    search?: string;
-    classId?: string;
-    subjectId?: string;
-    sex?: "MALE" | "FEMALE";
-    bloodType?: string;
-    sortBy?: "name" | "surname" | "subjects" | "subjectCount" | "createdAt";
-    sortOrder?: "asc" | "desc";
-  }>;
-}
-
-export async function TeacherListContent({ searchParams }: TeacherListContentProps) {
+export async function TeacherListContent({ searchParams }: TeacherListPageProps) {
   const params = await searchParams;
 
   const queryParams = {
     page: params.page ? parseInt(params.page) : 1,
     limit: params.limit ? parseInt(params.limit) : 10,
     search: params.search || "",
-    classId: params.classId,
-    subjectId: params.subjectId,
+    subject: params.subject,
     sex: params.sex,
     bloodType: params.bloodType,
     sortBy: params.sortBy || "createdAt",
@@ -43,6 +29,7 @@ export async function TeacherListContent({ searchParams }: TeacherListContentPro
   const columns = [
     { header: "Info", accessor: "info" },
     { header: "Teacher ID", accessor: "teacherId", className: "hidden md:table-cell" },
+    { header: "Sex", accessor: "sex", className: "hidden md:table-cell" },
     { header: "Subjects", accessor: "subjects", className: "hidden md:table-cell" },
     { header: "Classes", accessor: "classes", className: "hidden md:table-cell" },
     { header: "Phone", accessor: "phone", className: "hidden lg:table-cell" },
@@ -52,6 +39,7 @@ export async function TeacherListContent({ searchParams }: TeacherListContentPro
 
   const renderRow = (item: TeacherList) => (
     <tr key={item.id} className="border-b border-gray-200 even:bg-slate-50 text-sm hover:bg-scholera-purple-light">
+      {/* Info */}
       <td className="flex items-center gap-4 p-4">
         <Image src={item?.img || "/avatar.png"} alt={item.username} width={40} height={40} className="md:hidden xl:block w-10 h-10 rounded-full object-cover" />
         <div className="flex flex-col">
@@ -59,11 +47,19 @@ export async function TeacherListContent({ searchParams }: TeacherListContentPro
           <p className="text-xs text-gray-500">{item?.email}</p>
         </div>
       </td>
+      {/* Teacher-ID */}
       <td className="hidden md:table-cell">{item.id}</td>
+      {/* Sex */}
+      <td className="hidden md:table-cell">{item.sex.toLowerCase()}</td>
+      {/* Subjects */}
       <td className="hidden md:table-cell">{item.subjects.map((subject) => subject.name).join(", ")}</td>
+      {/* Classes */}
       <td className="hidden md:table-cell">{item.classes.map((classItem) => classItem.name).join(", ")}</td>
+      {/* Phone */}
       <td className="hidden md:table-cell">{item.phone}</td>
+      {/* Address */}
       <td className="hidden md:table-cell">{item.address}</td>
+      {/* Actions */}
       <td>
         <div className="flex items-center gap-2">
           <Link href={`/list/teachers/${item.id}`}>
