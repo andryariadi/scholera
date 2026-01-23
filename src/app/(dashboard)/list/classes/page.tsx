@@ -1,61 +1,29 @@
+import ClassListContent from "@/components/ClassListContent";
 import FormModal from "@/components/FormModal";
-import Pagination from "@/components/Pagination";
-import Table from "@/components/Table";
+import TableSearchSkeleton from "@/components/skeletons/SearchBarSkeleton";
+import { TeacherListSkeleton } from "@/components/skeletons/TeacherTableSkeleton";
+import TableFilter from "@/components/TableFilter";
 import TableSearch from "@/components/TableSearch";
-import { classesData } from "@/libs/constants";
+import TableSort from "@/components/TableSort";
+import { classFilterConfig } from "@/libs/config/filter-configs";
+import { classSortOptions } from "@/libs/config/sort-config";
 import { Filter, SortDesc } from "lucide-react";
+import { Suspense } from "react";
 
-const ClassListPage = () => {
+export interface ClassListPageProps {
+  searchParams: Promise<{
+    page?: string;
+    limit?: string;
+    search?: string;
+    capacity?: number;
+    grade?: string;
+    sortBy?: "name" | "grade" | "capacity";
+    sortOrder?: "asc" | "desc";
+  }>;
+}
+
+const ClassListPage = ({ searchParams }: ClassListPageProps) => {
   const role = "admin";
-
-  const columns = [
-    {
-      header: "Class Name",
-      accessor: "name",
-    },
-    {
-      header: "Capacity",
-      accessor: "capacity",
-      className: "hidden md:table-cell",
-    },
-    {
-      header: "Grade",
-      accessor: "grade",
-      className: "hidden md:table-cell",
-    },
-    {
-      header: "Supervisor",
-      accessor: "supervisor",
-      className: "hidden md:table-cell",
-    },
-    {
-      header: "Actions",
-      accessor: "action",
-    },
-  ];
-  const renderRow = (item: Class) => (
-    <tr key={item.id} className="border-b border-gray-200 even:bg-slate-50 text-sm hover:bg-scholera-purple-light">
-      {/* Name */}
-      <td className="flex items-center gap-4 p-4">{item.name}</td>
-      {/* Capacity */}
-      <td className="hidden md:table-cell">{item.capacity}</td>
-      {/* Grade */}
-      <td className="hidden md:table-cell">{item.grade}</td>
-      {/* Supervisor */}
-      <td className="hidden md:table-cell">{item.supervisor}</td>
-      {/* Actions */}
-      <td>
-        <div className="flex items-center gap-2">
-          {role === "admin" && (
-            <>
-              <FormModal table="class" type="update" data={item} />
-              <FormModal table="class" type="delete" id={item.id} />
-            </>
-          )}
-        </div>
-      </td>
-    </tr>
-  );
 
   return (
     <section className="bg-white p-4 rounded-lg space-y-5 shadow-sm">
@@ -67,18 +35,15 @@ const ClassListPage = () => {
         {/* Actions Button */}
         <div className="w-full md:w-auto flex flex-col md:flex-row items-center gap-4">
           {/* Search */}
-          <TableSearch />
+          <Suspense fallback={<TableSearchSkeleton />}>
+            <TableSearch />
+          </Suspense>
 
           <div className="flex items-center gap-4 self-end">
             {/* Filter Button */}
-            <button className="action-btn">
-              <Filter size={14} />
-            </button>
+            <TableFilter filters={classFilterConfig} title="Class Filters" />
 
-            {/* Sort Button */}
-            <button className="action-btn">
-              <SortDesc size={14} />
-            </button>
+            <TableSort options={classSortOptions} />
 
             {/* Modal Button */}
             {role === "admin" && (
@@ -91,11 +56,10 @@ const ClassListPage = () => {
         </div>
       </div>
 
-      {/* Middle - Table */}
-      <Table columns={columns} data={classesData} renderRow={renderRow} />
-
-      {/* Bottom - Pagination */}
-      <Pagination />
+      {/* Class List */}
+      <Suspense fallback={<TeacherListSkeleton />}>
+        <ClassListContent searchParams={searchParams} />
+      </Suspense>
     </section>
   );
 };

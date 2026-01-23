@@ -113,8 +113,8 @@ model Class {
   grade   Grade  @relation(fields: [gradeId], references: [id])
 
   // One to many:
-  lessons       Lesson[]
   students      Student[]
+  lessons       Lesson[]
   events        Event[]
   announcements Announcement[]
 

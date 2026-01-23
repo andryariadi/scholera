@@ -1,6 +1,7 @@
 import { Prisma } from "@/generated/prisma/browser";
 import { StudentList } from "../types/prisma-schema";
 import prisma from "../config/prisma";
+import { cacheLife, cacheTag } from "next/cache";
 
 export interface GetStudentParams {
   // Pagination
@@ -32,7 +33,11 @@ export interface GetStudentsResponse {
   };
 }
 
-export const getStudents = async (params: GetStudentParams): Promise<GetStudentsResponse> => {
+export const getStudents = async (params: GetStudentParams = {}): Promise<GetStudentsResponse> => {
+  "use cache";
+  cacheLife("hours");
+  cacheTag("students", `students-page-${params.page || 1}`);
+
   try {
     const { page = 1, limit = 10, search = "", grade, sex: rawSex, sortBy = "createdAt", sortOrder = "desc" } = params;
 

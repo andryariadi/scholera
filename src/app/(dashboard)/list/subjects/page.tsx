@@ -1,48 +1,32 @@
 import FormModal from "@/components/FormModal";
 import Pagination from "@/components/Pagination";
+import TableSearchSkeleton from "@/components/skeletons/SearchBarSkeleton";
+import { TeacherListSkeleton } from "@/components/skeletons/TeacherTableSkeleton";
+import SubjectListContent from "@/components/SubjectListContent";
 import Table from "@/components/Table";
+import TableFilter from "@/components/TableFilter";
 import TableSearch from "@/components/TableSearch";
+import TableSort from "@/components/TableSort";
+import { subjectFilterConfig } from "@/libs/config/filter-configs";
+import { subjectSortOptions } from "@/libs/config/sort-config";
 import { subjectsData } from "@/libs/constants";
 import { Filter, SortDesc } from "lucide-react";
+import { Suspense } from "react";
 
-const SubjectListPage = () => {
+export interface SubjectListPageProps {
+  searchParams: Promise<{
+    page?: string;
+    limit?: string;
+    search?: string;
+    teacher?: string;
+    lesson?: string;
+    sortBy?: "name";
+    sortOrder?: "asc" | "desc";
+  }>;
+}
+
+const SubjectListPage = ({ searchParams }: SubjectListPageProps) => {
   const role = "admin";
-
-  const columns = [
-    {
-      header: "Subject Name",
-      accessor: "name",
-    },
-    {
-      header: "Teachers",
-      accessor: "teachers",
-      className: "hidden md:table-cell",
-    },
-    {
-      header: "Actions",
-      accessor: "action",
-    },
-  ];
-
-  const renderRow = (item: Subject) => (
-    <tr key={item.id} className="border-b border-gray-200 even:bg-slate-50 text-sm hover:bg-scholera-purple-light">
-      {/* Name */}
-      <td className="flex items-center gap-4 p-4">{item.name}</td>
-      {/* Teachers */}
-      <td className="hidden md:table-cell">{item.teachers.join(",")}</td>
-      {/* Actions */}
-      <td>
-        <div className="flex items-center gap-2">
-          {role === "admin" && (
-            <>
-              <FormModal table="subject" type="update" data={item} />
-              <FormModal table="subject" type="delete" id={item.id} />
-            </>
-          )}
-        </div>
-      </td>
-    </tr>
-  );
 
   return (
     <section className="bg-white p-4 rounded-lg space-y-5 shadow-sm">
@@ -54,21 +38,16 @@ const SubjectListPage = () => {
         {/* Actions Button */}
         <div className="w-full md:w-auto flex flex-col md:flex-row items-center gap-4">
           {/* Search */}
-          <TableSearch />
+          <Suspense fallback={<TableSearchSkeleton />}>
+            <TableSearch />
+          </Suspense>
 
           <div className="flex items-center gap-4 self-end">
-            {/* Filter Button */}
-            <button className="action-btn">
-              <Filter size={14} />
-            </button>
+            <TableFilter filters={subjectFilterConfig} title="Subject Filters" />
 
-            {/* Sort Button */}
-            <button className="action-btn">
-              <SortDesc size={14} />
-            </button>
+            <TableSort options={subjectSortOptions} />
 
             {/* Modal Button */}
-
             {role === "admin" && (
               // <button className="action-btn">
               //   <Plus size={14} />
@@ -79,11 +58,10 @@ const SubjectListPage = () => {
         </div>
       </div>
 
-      {/* Middle - Table */}
-      <Table columns={columns} data={subjectsData} renderRow={renderRow} />
-
-      {/* Bottom - Pagination */}
-      <Pagination />
+      {/* Subjects List */}
+      <Suspense fallback={<TeacherListSkeleton />}>
+        <SubjectListContent searchParams={searchParams} />
+      </Suspense>
     </section>
   );
 };

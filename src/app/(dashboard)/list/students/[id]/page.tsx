@@ -1,5 +1,4 @@
 import Announcements from "@/components/Announcement";
-import BigCalendar from "@/components/BigCalendar";
 import BigCalendarContainer from "@/components/BigCalendarContainer";
 import PerformanceChart from "@/components/PerformanceChart";
 import AnnouncementsSkeleton from "@/components/skeletons/AnnouncementSkeleton";
@@ -17,7 +16,15 @@ const getStudentCache = async (id: string) => {
   return await getStudent(id);
 };
 
-async function StudentProfileSection({ params }: { params: Promise<{ id: string }> }) {
+/*************  ✨ Windsurf Command ⭐  *************/
+/**
+ * Displays a student's profile page.
+ *
+ * @param {object} params - an object containing the student's id.
+ *
+ * @returns {JSX.Element} - a JSX element representing the student's profile page.
+ */
+/*******  0f6b3749-a2e4-42ec-ab9f-d4aaad334457  *******/ async function StudentProfileSection({ params }: { params: Promise<{ id: string }> }) {
   const { id } = await params;
   const student = await getStudentCache(id);
 

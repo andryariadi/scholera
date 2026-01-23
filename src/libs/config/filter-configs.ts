@@ -84,24 +84,55 @@ export const parentFilterConfig: FilterOption[] = [
 ];
 
 // Lessons Filter Configuration:
+export const subjectFilterConfig: FilterOption[] = [
+  {
+    key: "name",
+    label: "Subject Name",
+    type: "select",
+    options: [], // Fetch from API
+  },
+];
+
+export const classFilterConfig: FilterOption[] = [
+  {
+    key: "capacity",
+    label: "Capacity",
+    type: "select",
+    options: Array.from({ length: 20 }, (_, i) => ({
+      value: String(i + 1),
+      label: String(i + 1),
+    })),
+  },
+  {
+    key: "grade",
+    label: "Grade",
+    type: "select",
+    options: Array.from({ length: 6 }, (_, i) => ({
+      value: String(i + 1),
+      label: String(i + 1),
+    })),
+  },
+];
+
+// Lessons Filter Configuration:
 export const lessonFilterConfig: FilterOption[] = [
   {
-    key: "subjectId",
-    label: "Subject",
+    key: "name",
+    label: "Lesson Name",
     type: "select",
-    options: [], // Fetch from API
+    options: [],
   },
   {
-    key: "classId",
+    key: "class",
     label: "Class",
     type: "select",
-    options: [], // Fetch from API
+    options: [],
   },
   {
-    key: "teacherId",
+    key: "teacher",
     label: "Teacher",
     type: "select",
-    options: [], // Fetch from API
+    options: [],
   },
   {
     key: "day",
@@ -113,8 +144,6 @@ export const lessonFilterConfig: FilterOption[] = [
       { value: "WEDNESDAY", label: "Wednesday" },
       { value: "THURSDAY", label: "Thursday" },
       { value: "FRIDAY", label: "Friday" },
-      { value: "SATURDAY", label: "Saturday" },
-      { value: "SUNDAY", label: "Sunday" },
     ],
   },
 ];
