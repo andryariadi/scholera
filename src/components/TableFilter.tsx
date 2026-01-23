@@ -3,19 +3,7 @@
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
 import { Suspense, useState } from "react";
 import { Filter, X } from "lucide-react";
-
-export interface FilterOption {
-  key: string;
-  label: string;
-  type: "select" | "text" | "date";
-  options?: { value: string; label: string }[];
-  placeholder?: string;
-}
-
-interface TableFilterContentProps {
-  filters: FilterOption[];
-  title?: string;
-}
+import { FilterOption, TableFilterContentProps } from "@/libs/config/filter-configs";
 
 function TableFilterContent({ filters, title = "Filters" }: TableFilterContentProps) {
   const searchParams = useSearchParams();

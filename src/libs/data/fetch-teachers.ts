@@ -12,13 +12,12 @@ export interface GetTeachersParams {
   search?: string;
 
   // Filter
-  classId?: string;
-  subjectId?: string;
+  subject?: string;
   sex?: "MALE" | "FEMALE";
   bloodType?: string;
 
   // Sorting
-  sortBy?: "name" | "surname" | "subjects" | "subjectCount" | "createdAt";
+  sortBy?: "name" | "surname" | "class" | "createdAt";
   sortOrder?: "asc" | "desc";
 }
 
@@ -42,7 +41,7 @@ export const getTeachers = async (params: GetTeachersParams = {}): Promise<GetTe
 
   try {
     // Default values for params:
-    const { page = 1, limit = 10, search = "", classId, subjectId, sex: rawSex, bloodType, sortBy = "createdAt", sortOrder = "desc" } = params;
+    const { page = 1, limit = 10, search = "", subject, sex: rawSex, bloodType, sortBy = "createdAt", sortOrder = "desc" } = params;
 
     let sex: "MALE" | "FEMALE" | undefined;
     if (rawSex) {
@@ -61,7 +60,7 @@ export const getTeachers = async (params: GetTeachersParams = {}): Promise<GetTe
     // WHERE clause:
     const where: Prisma.TeacherWhereInput = {};
 
-    // Search di multiple fields:
+    // Search in multiple fields:
     if (search) {
       where.OR = [
         { name: { contains: search, mode: "insensitive" } },
@@ -72,17 +71,10 @@ export const getTeachers = async (params: GetTeachersParams = {}): Promise<GetTe
       ];
     }
 
-    // Filter by class:
-    if (classId) {
-      where.classes = {
-        some: { id: classId },
-      };
-    }
-
     // Filter by subject:
-    if (subjectId) {
+    if (subject) {
       where.subjects = {
-        some: { id: subjectId },
+        some: { name: subject },
       };
     }
 
@@ -98,23 +90,15 @@ export const getTeachers = async (params: GetTeachersParams = {}): Promise<GetTe
     // ORDER By:
     let orderBy: Prisma.TeacherOrderByWithRelationInput = {};
 
-    if (sortBy === "subjects") {
-      // Untuk sorting berdasarkan subjects, kita perlu pendekatan berbeda
-      // Kita akan sorting berdasarkan nama subject pertama
+    if (sortBy === "class") {
+      // sort based on one to many relation:
       orderBy = {
-        subjects: {
-          _count: sortOrder === "desc" ? "desc" : "asc",
-        },
-      };
-    } else if (sortBy === "subjectCount") {
-      // Sorting berdasarkan jumlah subjects:
-      orderBy = {
-        subjects: {
-          _count: sortOrder === "desc" ? "desc" : "asc",
+        classes: {
+          _count: sortOrder,
         },
       };
     } else {
-      // Sorting biasa untuk field yang ada di tabel teacher:
+      // sort based on column:
       orderBy = {
         [sortBy]: sortOrder,
       };
@@ -124,9 +108,14 @@ export const getTeachers = async (params: GetTeachersParams = {}): Promise<GetTe
     const [teachers, total] = await Promise.all([
       prisma.teacher.findMany({
         where,
+        orderBy,
+        skip,
+        take: validLimit,
         include: {
           subjects: true,
-          classes: true,
+          classes: {
+            orderBy: { name: "asc" },
+          },
           lessons: {
             include: {
               subject: true,
@@ -141,9 +130,6 @@ export const getTeachers = async (params: GetTeachersParams = {}): Promise<GetTe
             },
           },
         },
-        orderBy,
-        skip,
-        take: validLimit,
       }),
       prisma.teacher.count({ where }),
     ]);

@@ -1,4 +1,4 @@
-import { Class, Lesson, Subject, Teacher } from "@/generated/prisma/client";
+import { Announcement, Assignment, Attendance, Class, Event, Exam, Grade, Lesson, Parent, Result, Student, Subject, Teacher } from "@/generated/prisma/client";
 
 interface columns {
   header: string;
@@ -6,7 +6,7 @@ interface columns {
   className?: string;
 }
 
-export interface TeacherColumns<T> {
+export interface TableColumns<T> {
   columns: columns[];
   renderRow: (item: T) => React.ReactNode;
   data: T[];
@@ -23,4 +23,16 @@ interface FormModal<T> {
   data?: T;
 }
 
-export type TeacherList = Teacher & { subjects: Subject[] } & { classes: Class[] } & { lessons: Lesson[] };
+export type TeacherList = Teacher & { subjects: Subject[] } & { classes: Class[] } & { lessons: Lesson[] } & { _count: { subjects: number; classes: number; lessons: number } };
+
+export type StudentList = Student & { attendances: Attendance[] } & { results: Result[] } & { parent: Parent } & { class: Class } & { grade: Grade } & { _count: { attendances: number; results: number } };
+
+export type ParentList = Parent & { students: Student[] } & { _count: { students: number } };
+
+export type SubjectList = Subject & { teachers: Teacher[] } & { lessons: Lesson[] } & { _count: { teachers: number; lessons: number } };
+
+export type ClassList = Class & { supervisor: Teacher } & { grade: Grade } & { students: Student[] } & { lessons: Lesson[] } & { events: Event[] } & { announcements: Announcement[] } & { _count: { students: number; lessons: number } };
+
+export type LessonList = Lesson & { subject: Subject } & { class: Class } & { teacher: Teacher } & { exams: Exam[] } & { assignments: Assignment[] } & { attendances: Attendance[] } & {
+  _count: { exams: number; assignments: number; attendances: number };
+};

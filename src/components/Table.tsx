@@ -1,8 +1,8 @@
-import { TeacherColumns } from "@/libs/types/prisma-schema";
+import { TableColumns } from "@/libs/types/prisma-schema";
 
-const Table = <T,>({ columns, data, renderRow }: TeacherColumns<T>) => {
+const Table = <T,>({ columns, data, renderRow }: TableColumns<T>) => {
   return (
-    <table className="w-full">
+    <table className="w-full table-auto">
       {/* Table Header */}
       <thead>
         <tr className="text-gray-500 text-sm text-left">

@@ -9,16 +9,15 @@ import { teacherFilterConfig } from "@/libs/config/filter-configs";
 import TableSort from "@/components/TableSort";
 import { teacherSortOptions } from "@/libs/config/sort-config";
 
-interface TeacherListPageProps {
+export interface TeacherListPageProps {
   searchParams: Promise<{
     page?: string;
     limit?: string;
     search?: string;
-    classId?: string;
-    subjectId?: string;
+    subject?: string;
     sex?: "MALE" | "FEMALE";
     bloodType?: string;
-    sortBy?: "name" | "surname" | "subjects" | "subjectCount" | "createdAt";
+    sortBy?: "name" | "surname" | "class" | "createdAt";
     sortOrder?: "asc" | "desc";
   }>;
 }
@@ -28,7 +27,7 @@ export default function TeacherListPage({ searchParams }: TeacherListPageProps) 
 
   return (
     <section className="bg-white shadow-xs p-4 rounded-lg space-y-5">
-      {/* Static Header - Langsung muncul */}
+      {/* Top - Header */}
       <div className="flex items-center justify-between">
         <h1 className="hidden md:block text-lg font-semibold">All Teachers</h1>
 
@@ -42,12 +41,14 @@ export default function TeacherListPage({ searchParams }: TeacherListPageProps) 
             <TableFilter filters={teacherFilterConfig} title="Teacher Filters" />
 
             <TableSort options={teacherSortOptions} />
+
+            {/* Modal Button */}
             {role === "admin" && <FormModal table="teacher" type="create" />}
           </div>
         </div>
       </div>
 
-      {/* Dynamic Content - Stream dengan Suspense */}
+      {/* Teacher List */}
       <Suspense fallback={<TeacherListSkeleton />}>
         <TeacherListContent searchParams={searchParams} />
       </Suspense>

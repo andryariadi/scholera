@@ -10,12 +10,17 @@ import { formatDate } from "@/libs/utils";
 import { CalendarDays, Mail, Phone } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
-import { Suspense } from "react";
+import { cache, Suspense } from "react";
+
+// Prevent deduplicate requests:
+const getTeacherCache = cache(async (id: string) => {
+  return await getTeacher(id);
+});
 
 async function TeacherProfileSection({ params }: { params: Promise<{ id: string }> }) {
   const { id } = await params;
 
-  const teacher = await getTeacher(id);
+  const teacher = await getTeacherCache(id);
 
   if (!teacher) {
     return (
@@ -97,7 +102,7 @@ async function TeacherProfileSection({ params }: { params: Promise<{ id: string 
         <div className="user-performance">
           <Image src="/singleLesson.png" alt="Lessons" width={24} height={24} className="w-6 h-6" />
           <div>
-            <h1 className="text-xl font-semibold"> {teacher.lessons?.length || 0}</h1>
+            <h1 className="text-xl font-semibold"> {teacher._count.lessons}</h1>
             <span className="text-sm text-gray-400">Lessons</span>
           </div>
         </div>
@@ -106,7 +111,7 @@ async function TeacherProfileSection({ params }: { params: Promise<{ id: string 
         <div className="user-performance">
           <Image src="/singleClass.png" alt="Classes" width={24} height={24} className="w-6 h-6" />
           <div>
-            <h1 className="text-xl font-semibold">{teacher.classes?.length || 0}</h1>
+            <h1 className="text-xl font-semibold">{teacher._count.classes}</h1>
             <span className="text-sm text-gray-400">Classes</span>
           </div>
         </div>
@@ -118,7 +123,7 @@ async function TeacherProfileSection({ params }: { params: Promise<{ id: string 
 async function TeacherScheduleSection({ params }: { params: Promise<{ id: string }> }) {
   const { id } = await params;
 
-  const teacher = await getTeacher(id);
+  const teacher = await getTeacherCache(id);
 
   return (
     <div className="bg-white shadow-xs rounded-md p-4 h-215">
@@ -131,7 +136,7 @@ async function TeacherScheduleSection({ params }: { params: Promise<{ id: string
 async function Shortcuts({ params }: { params: Promise<{ id: string }> }) {
   const { id } = await params;
 
-  const teacher = await getTeacher(id);
+  const teacher = await getTeacherCache(id);
 
   return (
     <div className="bg-white shadow-xs p-4 rounded-md space-y-4">
@@ -164,7 +169,6 @@ const TeacherDetailPage = ({ params }: { params: Promise<{ id: string }> }) => {
       {/* Left - Content */}
       <div className="w-full xl:w-2/3 space-y-4">
         {/* Top - Teacher Info */}
-
         <Suspense fallback={<TeacherProfileSkeleton />}>
           <TeacherProfileSection params={params} />
         </Suspense>
