@@ -36,3 +36,5 @@ export type ClassList = Class & { supervisor: Teacher } & { grade: Grade } & { s
 export type LessonList = Lesson & { subject: Subject } & { class: Class } & { teacher: Teacher } & { exams: Exam[] } & { assignments: Assignment[] } & { attendances: Attendance[] } & {
   _count: { exams: number; assignments: number; attendances: number };
 };
+
+export type ExamList = Exam & { lesson: Lesson & { class: Class; teacher: Teacher; subject: Subject } } & { results: Result[] };

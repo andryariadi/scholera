@@ -57,3 +57,12 @@ export const lessonSortOptions: SortOption[] = [
   { value: "day", label: "Day (A-Z)", order: "asc" },
   { value: "day", label: "Day (Z-A)", order: "desc" },
 ];
+
+export const examSortOptions: SortOption[] = [
+  { value: "subject", label: "Subject (A-Z)", order: "asc" },
+  { value: "subject", label: "Subject (Z-A)", order: "desc" },
+  { value: "class", label: "Class (A-Z)", order: "asc" },
+  { value: "class", label: "Class (Z-A)", order: "desc" },
+  { value: "teacher", label: "Teacher (A-Z)", order: "asc" },
+  { value: "teacher", label: "Teacher (Z-A)", order: "desc" },
+];

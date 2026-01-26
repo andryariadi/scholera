@@ -1,3 +1,5 @@
+import { classData, subjectData } from "../constants";
+
 export interface FilterOption {
   key: string;
   label: string;
@@ -151,19 +153,21 @@ export const lessonFilterConfig: FilterOption[] = [
 // Exams Filter Configuration:
 export const examFilterConfig: FilterOption[] = [
   {
-    key: "lessonId",
-    label: "Lesson",
+    key: "subject",
+    label: "Subject",
     type: "select",
-    options: [], // Fetch from API
+    options: subjectData.map((subject) => ({ value: subject.name, label: subject.name })),
   },
   {
-    key: "startDate",
-    label: "Start Date",
-    type: "date",
+    key: "class",
+    label: "Class",
+    type: "select",
+    options: classData.map((clss) => ({ value: clss.name, label: clss.name })),
   },
-  {
-    key: "endDate",
-    label: "End Date",
-    type: "date",
-  },
+  // {
+  //   key: "teacher",
+  //   label: "Teacher",
+  //   type: "select",
+  //   options: [], // Fetch from API
+  // },
 ];
