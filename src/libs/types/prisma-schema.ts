@@ -38,3 +38,11 @@ export type LessonList = Lesson & { subject: Subject } & { class: Class } & { te
 };
 
 export type ExamList = Exam & { lesson: Lesson & { class: Class; teacher: Teacher; subject: Subject } } & { results: Result[] };
+
+export type AssignmentList = Assignment & { lesson: Lesson & { class: Class; teacher: Teacher; subject: Subject } } & { results: Result[] };
+
+export type ResultList = Result & { student: Student } & { exam: Exam | null } & { assignment: (Assignment & { lesson: Lesson & { class: Class; teacher: Teacher; subject: Subject } }) | null };
+
+export type EventList = Event & { class: Class };
+
+export type AnnouncementList = Announcement & { class: Class };

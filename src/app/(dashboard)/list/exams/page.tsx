@@ -42,7 +42,7 @@ const ExamListPage = ({ searchParams }: ExamListPageProps) => {
           </Suspense>
 
           <div className="flex items-center gap-4 self-end">
-            <TableFilter filters={examFilterConfig} title="Teacher Filters" />
+            <TableFilter filters={examFilterConfig} title="Exam Filters" />
 
             <TableSort options={examSortOptions} />
 

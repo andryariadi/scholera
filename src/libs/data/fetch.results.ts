@@ -1,9 +1,9 @@
 import { Prisma } from "@/generated/prisma/client";
-import { ExamList } from "../types/prisma-schema";
+import { ResultList } from "../types/prisma-schema";
 import prisma from "../config/prisma";
 import { cacheLife, cacheTag } from "next/cache";
 
-export interface GetExamsParams {
+export interface GetResultsParams {
   // Pagination
   page?: number;
   limit?: number;
@@ -12,19 +12,18 @@ export interface GetExamsParams {
   search?: string;
 
   // Filter
-  lesson?: string;
   subject?: string;
   class?: string;
   teacher?: string;
-  result?: string;
+  student?: string;
 
   // Sorting
-  sortBy?: "title" | "lesson" | "subject" | "class" | "teacher" | "startTime";
+  sortBy?: "score" | "student" | "subject" | "class" | "teacher";
   sortOrder?: "asc" | "desc";
 }
 
-export interface GetExamsResponse {
-  data: ExamList[];
+export interface GetResultsResponse {
+  data: ResultList[];
   pagination: {
     total: number;
     page: number;
@@ -36,14 +35,14 @@ export interface GetExamsResponse {
   error?: string;
 }
 
-export const getExams = async (params: GetExamsParams = {}): Promise<GetExamsResponse> => {
+export const getResults = async (params: GetResultsParams = {}): Promise<GetResultsResponse> => {
   "use cache";
   cacheLife("hours");
-  cacheTag("exams", `exams-page-${params.page || 1}`);
+  cacheTag("results", `results-page-${params.page || 1}`);
 
   try {
     // Default values for params:
-    const { page = 1, limit = 10, search = "", lesson, subject, class: className, teacher, result, sortBy = "subject", sortOrder = "asc" } = params;
+    const { page = 1, limit = 10, search = "", subject, class: className, teacher, student, sortBy = "student", sortOrder = "asc" } = params;
 
     // Validasi:
     const validPage = Math.max(1, page);
@@ -51,7 +50,7 @@ export const getExams = async (params: GetExamsParams = {}): Promise<GetExamsRes
     const skip = (validPage - 1) * validLimit;
 
     // andConditions for WHERE clause:
-    const andConditions: Prisma.ExamWhereInput[] = [];
+    const andConditions: Prisma.ResultWhereInput[] = [];
 
     // Search with OR:
     if (search) {
@@ -60,33 +59,20 @@ export const getExams = async (params: GetExamsParams = {}): Promise<GetExamsRes
 
       andConditions.push({
         OR: [
-          { title: { contains: search, mode: "insensitive" } },
-          { lesson: { name: { contains: search, mode: "insensitive" } } },
-          {
-            lesson: {
-              subject: { name: { contains: search, mode: "insensitive" } },
-            },
-          },
-          {
-            lesson: {
-              class: { name: { contains: search, mode: "insensitive" } },
-            },
-          },
-          {
-            lesson: {
-              teacher: { name: { contains: search, mode: "insensitive" } },
-            },
-          },
-          ...(isNumeric ? [{ results: { some: { score: searchAsNumber } } }] : []),
+          { score: isNumeric ? searchAsNumber : undefined },
+          { student: { name: { contains: search, mode: "insensitive" } } },
+          { assignment: { lesson: { subject: { name: { contains: search, mode: "insensitive" } } } } },
+          { assignment: { lesson: { class: { name: { contains: search, mode: "insensitive" } } } } },
+          { assignment: { lesson: { teacher: { name: { contains: search, mode: "insensitive" } } } } },
         ],
       });
     }
 
-    // Filter lesson
-    if (lesson) {
+    // Filter student
+    if (student) {
       andConditions.push({
-        lesson: {
-          name: { contains: lesson, mode: "insensitive" },
+        student: {
+          name: { contains: student, mode: "insensitive" },
         },
       });
     }
@@ -94,9 +80,11 @@ export const getExams = async (params: GetExamsParams = {}): Promise<GetExamsRes
     // Filter subject
     if (subject) {
       andConditions.push({
-        lesson: {
-          subject: {
-            name: { contains: subject, mode: "insensitive" },
+        assignment: {
+          lesson: {
+            subject: {
+              name: { contains: subject, mode: "insensitive" },
+            },
           },
         },
       });
@@ -105,9 +93,11 @@ export const getExams = async (params: GetExamsParams = {}): Promise<GetExamsRes
     // Filter class
     if (className) {
       andConditions.push({
-        lesson: {
-          class: {
-            name: { contains: className, mode: "insensitive" },
+        assignment: {
+          lesson: {
+            class: {
+              name: { contains: className, mode: "insensitive" },
+            },
           },
         },
       });
@@ -116,39 +106,46 @@ export const getExams = async (params: GetExamsParams = {}): Promise<GetExamsRes
     // Filter teacher
     if (teacher) {
       andConditions.push({
-        lesson: {
-          teacher: {
-            name: { contains: teacher, mode: "insensitive" },
+        assignment: {
+          lesson: {
+            teacher: {
+              name: { contains: teacher, mode: "insensitive" },
+            },
           },
         },
       });
     }
 
-    // Filter by result:
-    if (result) {
-      andConditions.push({
-        results: { some: { score: Number(result) || undefined } },
-      });
-    }
-
     // Build final WHERE clause:
-    const where: Prisma.ExamWhereInput = andConditions.length > 0 ? { AND: andConditions } : {};
+    const where: Prisma.ResultWhereInput = andConditions.length > 0 ? { AND: andConditions } : {};
 
     // Sorting:
-    let orderBy: Prisma.ExamOrderByWithRelationInput = {};
+    let orderBy: Prisma.ResultOrderByWithRelationInput = {};
 
-    if (sortBy === "lesson") {
+    if (sortBy === "student") {
       // sort based on many to one relation:
-      orderBy.lesson = { name: sortOrder };
+      orderBy.student = { name: sortOrder };
     } else if (sortBy === "subject") {
       // sort based on many to one relation:
-      orderBy.lesson = { subject: { name: sortOrder } };
+      orderBy.assignment = {
+        lesson: {
+          subject: { name: sortOrder },
+        },
+      };
     } else if (sortBy === "class") {
       // sort based on many to one relation:
-      orderBy.lesson = { class: { name: sortOrder } };
+      orderBy.assignment = {
+        lesson: {
+          class: { name: sortOrder },
+        },
+      };
     } else if (sortBy === "teacher") {
       // sort based on many to one relation:
-      orderBy.lesson = { teacher: { name: sortOrder } };
+      orderBy.assignment = {
+        lesson: {
+          teacher: { name: sortOrder },
+        },
+      };
     } else {
       // sort based on column:
       orderBy = {
@@ -157,30 +154,33 @@ export const getExams = async (params: GetExamsParams = {}): Promise<GetExamsRes
     }
 
     // Execute query:
-    const [exams, total] = await Promise.all([
-      prisma.exam.findMany({
+    const [results, total] = await Promise.all([
+      prisma.result.findMany({
         where,
         orderBy,
         skip,
         take: validLimit,
         include: {
-          lesson: {
+          student: true,
+          assignment: {
             include: {
-              class: true,
-              teacher: true,
-              subject: true,
+              lesson: {
+                include: {
+                  subject: true,
+                  class: true,
+                  teacher: true,
+                },
+              },
             },
           },
-          results: true,
         },
       }),
-      prisma.exam.count({ where }),
+      prisma.result.count({ where }),
     ]);
-
     const totalPages = Math.ceil(total / validLimit);
 
     return {
-      data: exams as ExamList[],
+      data: results as ResultList[],
       pagination: {
         total,
         page: validPage,
@@ -191,7 +191,7 @@ export const getExams = async (params: GetExamsParams = {}): Promise<GetExamsRes
       },
     };
   } catch (error) {
-    console.log("Error in getExams:", error);
+    console.log("Error in getResults:", error);
 
     let errorMessage = "An unexpected error occurred";
 

@@ -1,9 +1,9 @@
 import { Prisma } from "@/generated/prisma/client";
-import { ExamList } from "../types/prisma-schema";
+import { AssignmentList } from "../types/prisma-schema";
 import prisma from "../config/prisma";
 import { cacheLife, cacheTag } from "next/cache";
 
-export interface GetExamsParams {
+export interface GetAssignmentsParams {
   // Pagination
   page?: number;
   limit?: number;
@@ -23,8 +23,8 @@ export interface GetExamsParams {
   sortOrder?: "asc" | "desc";
 }
 
-export interface GetExamsResponse {
-  data: ExamList[];
+export interface GetAssignmentsResponse {
+  data: AssignmentList[];
   pagination: {
     total: number;
     page: number;
@@ -36,14 +36,16 @@ export interface GetExamsResponse {
   error?: string;
 }
 
-export const getExams = async (params: GetExamsParams = {}): Promise<GetExamsResponse> => {
+export const getAssignments = async (params: GetAssignmentsParams = {}): Promise<GetAssignmentsResponse> => {
   "use cache";
   cacheLife("hours");
-  cacheTag("exams", `exams-page-${params.page || 1}`);
+  cacheTag("assignments", `assignments-page-${params.page || 1}`);
 
   try {
     // Default values for params:
     const { page = 1, limit = 10, search = "", lesson, subject, class: className, teacher, result, sortBy = "subject", sortOrder = "asc" } = params;
+
+    console.log({ search, subject, sortBy });
 
     // Validasi:
     const validPage = Math.max(1, page);
@@ -51,7 +53,7 @@ export const getExams = async (params: GetExamsParams = {}): Promise<GetExamsRes
     const skip = (validPage - 1) * validLimit;
 
     // andConditions for WHERE clause:
-    const andConditions: Prisma.ExamWhereInput[] = [];
+    const andConditions: Prisma.AssignmentWhereInput[] = [];
 
     // Search with OR:
     if (search) {
@@ -132,10 +134,10 @@ export const getExams = async (params: GetExamsParams = {}): Promise<GetExamsRes
     }
 
     // Build final WHERE clause:
-    const where: Prisma.ExamWhereInput = andConditions.length > 0 ? { AND: andConditions } : {};
+    const where: Prisma.AssignmentWhereInput = andConditions.length > 0 ? { AND: andConditions } : {};
 
     // Sorting:
-    let orderBy: Prisma.ExamOrderByWithRelationInput = {};
+    let orderBy: Prisma.AssignmentOrderByWithRelationInput = {};
 
     if (sortBy === "lesson") {
       // sort based on many to one relation:
@@ -157,8 +159,8 @@ export const getExams = async (params: GetExamsParams = {}): Promise<GetExamsRes
     }
 
     // Execute query:
-    const [exams, total] = await Promise.all([
-      prisma.exam.findMany({
+    const [assignments, total] = await Promise.all([
+      prisma.assignment.findMany({
         where,
         orderBy,
         skip,
@@ -174,13 +176,13 @@ export const getExams = async (params: GetExamsParams = {}): Promise<GetExamsRes
           results: true,
         },
       }),
-      prisma.exam.count({ where }),
+      prisma.assignment.count({ where }),
     ]);
 
     const totalPages = Math.ceil(total / validLimit);
 
     return {
-      data: exams as ExamList[],
+      data: assignments as AssignmentList[],
       pagination: {
         total,
         page: validPage,
@@ -191,7 +193,7 @@ export const getExams = async (params: GetExamsParams = {}): Promise<GetExamsRes
       },
     };
   } catch (error) {
-    console.log("Error in getExams:", error);
+    console.log("Error in getAssignments:", error);
 
     let errorMessage = "An unexpected error occurred";
 

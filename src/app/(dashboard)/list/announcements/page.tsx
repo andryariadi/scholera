@@ -1,54 +1,27 @@
 import FormModal from "@/components/FormModal";
-import Pagination from "@/components/Pagination";
-import Table from "@/components/Table";
+import TableSearchSkeleton from "@/components/skeletons/SearchBarSkeleton";
+import { TeacherListSkeleton } from "@/components/skeletons/TeacherTableSkeleton";
+import TableFilter from "@/components/TableFilter";
 import TableSearch from "@/components/TableSearch";
-import { announcementData } from "@/libs/constants";
-import { Filter, SortDesc } from "lucide-react";
+import TableSort from "@/components/TableSort";
+import { announcementFilterConfig } from "@/libs/config/filter-configs";
+import { announcementSortOptions } from "@/libs/config/sort-config";
+import { Suspense } from "react";
 
-const AnnouncementListPage = () => {
+export interface AnnouncementListPageProps {
+  searchParams: Promise<{
+    page?: string;
+    limit?: string;
+    search?: string;
+    title?: string;
+    class?: string;
+    sortBy?: "title" | "class" | "date";
+    sortOrder?: "asc" | "desc";
+  }>;
+}
+
+const AnnouncementListPage = ({ searchParams }: AnnouncementListPageProps) => {
   const role = "admin";
-
-  const columns = [
-    {
-      header: "Title",
-      accessor: "title",
-    },
-    {
-      header: "Class",
-      accessor: "class",
-    },
-    {
-      header: "Date",
-      accessor: "date",
-      className: "hidden md:table-cell",
-    },
-    {
-      header: "Actions",
-      accessor: "action",
-    },
-  ];
-
-  const renderRow = (item: Announcement) => (
-    <tr key={item.id} className="border-b border-gray-200 even:bg-slate-50 text-sm hover:bg-scholera-purple-light">
-      {/* Title */}
-      <td className="flex items-center gap-4 p-4">{item.title}</td>
-      {/* Class */}
-      <td>{item.class}</td>
-      {/* Date */}
-      <td className="hidden md:table-cell">{item.date}</td>
-      {/* Actions */}
-      <td>
-        <div className="flex items-center gap-2">
-          {role === "admin" && (
-            <>
-              <FormModal table="announcement" type="update" data={item} />
-              <FormModal table="announcement" type="delete" id={item.id} />
-            </>
-          )}
-        </div>
-      </td>
-    </tr>
-  );
 
   return (
     <section className="bg-white p-4 rounded-lg space-y-5 shadow-sm">
@@ -60,36 +33,25 @@ const AnnouncementListPage = () => {
         {/* Actions Button */}
         <div className="w-full md:w-auto flex flex-col md:flex-row items-center gap-4">
           {/* Search */}
-          <TableSearch />
+          <Suspense fallback={<TableSearchSkeleton />}>
+            <TableSearch />
+          </Suspense>
 
           <div className="flex items-center gap-4 self-end">
-            {/* Filter Button */}
-            <button className="action-btn">
-              <Filter size={14} />
-            </button>
+            <TableFilter filters={announcementFilterConfig} title="Announcement Filters" />
 
-            {/* Sort Button */}
-            <button className="action-btn">
-              <SortDesc size={14} />
-            </button>
+            <TableSort options={announcementSortOptions} />
 
             {/* Modal Button */}
-
-            {role === "admin" && (
-              // <button className="action-btn">
-              //   <Plus size={14} />
-              // </button>
-              <FormModal table="announcement" type="create" />
-            )}
+            {role === "admin" && <FormModal table="announcement" type="create" />}
           </div>
         </div>
       </div>
 
-      {/* Middle - Table */}
-      <Table columns={columns} data={announcementData} renderRow={renderRow} />
-
-      {/* Bottom - Pagination */}
-      <Pagination />
+      {/* Announcement List */}
+      <Suspense fallback={<TeacherListSkeleton />}>
+        <AnnouncementListPage searchParams={searchParams} />
+      </Suspense>
     </section>
   );
 };
