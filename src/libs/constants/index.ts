@@ -1222,3 +1222,18 @@ export const eventData = [
     endTime: "11:00",
   },
 ];
+
+export const subjectData = [
+  { name: "Mathematics" },
+  { name: "Science" },
+  { name: "English" },
+  { name: "History" },
+  { name: "Geography" },
+  { name: "Physics" },
+  { name: "Chemistry" },
+  { name: "Biology" },
+  { name: "Computer Science" },
+  { name: "Art" },
+];
+
+export const classData = [{ name: "1A" }, { name: "2A" }, { name: "3A" }, { name: "4A" }, { name: "5A" }, { name: "6A" }];

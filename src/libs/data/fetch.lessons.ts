@@ -99,7 +99,7 @@ export const getLessons = async (params: GetLessonsParams = {}): Promise<GetLess
     }
 
     // Execute query:
-    const [lessons, data] = await Promise.all([
+    const [lessons, total] = await Promise.all([
       prisma.lesson.findMany({
         where,
         orderBy,
@@ -117,12 +117,12 @@ export const getLessons = async (params: GetLessonsParams = {}): Promise<GetLess
       prisma.lesson.count({ where }),
     ]);
 
-    const totalPages = Math.ceil(data / validLimit);
+    const totalPages = Math.ceil(total / validLimit);
 
     return {
       data: lessons as LessonList[],
       pagination: {
-        total: data,
+        total,
         page: validPage,
         limit: validLimit,
         totalPages,

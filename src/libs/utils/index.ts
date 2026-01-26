@@ -9,7 +9,11 @@ export const formatDate = (dateString: Date) => {
   return `${day} ${month} ${year}`;
 };
 
-export const formatDateISO = (dateInput: Date | string) => {
+export const formatDateISO = (dateInput: Date | string | undefined | null) => {
+  if (!dateInput) {
+    return "N/A";
+  }
+
   if (typeof dateInput === "string") {
     return dateInput.split("T")[0];
   }
@@ -19,6 +23,27 @@ export const formatDateISO = (dateInput: Date | string) => {
   const day = String(dateInput.getDate()).padStart(2, "0");
 
   return `${year}-${month}-${day}`;
+};
+
+export const formatTime = (dateInput: Date | string | undefined | null): string => {
+  if (!dateInput) return "N/A";
+
+  try {
+    // Handle string atau Date
+    const date = typeof dateInput === "string" ? new Date(dateInput) : dateInput;
+
+    // Cek jika valid
+    if (isNaN(date.getTime())) return "Invalid Time";
+
+    // Format waktu menjadi HH:mm
+    const hours = String(date.getHours()).padStart(2, "0");
+    const minutes = String(date.getMinutes()).padStart(2, "0");
+
+    return `${hours}:${minutes}`;
+  } catch (error) {
+    console.error("Error formatting time:", error);
+    return "Error";
+  }
 };
 
 const getLatestMonday = (): Date => {
