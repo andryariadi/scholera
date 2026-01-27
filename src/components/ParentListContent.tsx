@@ -12,9 +12,9 @@ const ParentListContent = async ({ searchParams }: ParentListPageProps) => {
     page: params.page ? parseInt(params.page) : 1,
     limit: params.limit ? parseInt(params.limit) : 10,
     search: params.search || "",
-    student: params.student,
     address: params.address,
-    phone: params.phone,
+    email: params.email,
+    student: params.student,
     sortBy: params.sortBy || "createdAt",
     sortOrder: params.sortOrder || "desc",
   };
@@ -60,7 +60,7 @@ const ParentListContent = async ({ searchParams }: ParentListPageProps) => {
       <td className="flex items-center gap-4 p-4">
         <div className="flex flex-col">
           <h3 className="font-semibold">{item.name}</h3>
-          <p className="text-xs text-gray-500">{item?.email}</p>
+          <p className="text-xs text-gray-500">{item.username}</p>
         </div>
       </td>
       {/* Students */}
@@ -83,8 +83,6 @@ const ParentListContent = async ({ searchParams }: ParentListPageProps) => {
       </td>
     </tr>
   );
-
-  console.log({ parentsRes });
 
   return (
     <>

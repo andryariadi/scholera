@@ -15,10 +15,11 @@ export interface StudentListPageProps {
     limit?: string;
     search?: string;
     studentId?: string;
-    grade?: string;
     sex?: "MALE" | "FEMALE";
+    grade?: string;
+    class?: string;
     bloodType?: string;
-    sortBy?: "name" | "surname" | "grade" | "createdAt";
+    sortBy?: "name" | "grade" | "createdAt";
     sortOrder?: "asc" | "desc";
   }>;
 }

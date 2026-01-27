@@ -1,16 +1,12 @@
 import FormModal from "@/components/FormModal";
-import Pagination from "@/components/Pagination";
 import TableSearchSkeleton from "@/components/skeletons/SearchBarSkeleton";
 import { TeacherListSkeleton } from "@/components/skeletons/TeacherTableSkeleton";
 import SubjectListContent from "@/components/SubjectListContent";
-import Table from "@/components/Table";
 import TableFilter from "@/components/TableFilter";
 import TableSearch from "@/components/TableSearch";
 import TableSort from "@/components/TableSort";
 import { subjectFilterConfig } from "@/libs/config/filter-configs";
 import { subjectSortOptions } from "@/libs/config/sort-config";
-import { subjectsData } from "@/libs/constants";
-import { Filter, SortDesc } from "lucide-react";
 import { Suspense } from "react";
 
 export interface SubjectListPageProps {
@@ -18,6 +14,7 @@ export interface SubjectListPageProps {
     page?: string;
     limit?: string;
     search?: string;
+    name?: string;
     teacher?: string;
     lesson?: string;
     sortBy?: "name";

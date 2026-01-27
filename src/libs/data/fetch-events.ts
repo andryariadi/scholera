@@ -1,6 +1,7 @@
 import { Prisma } from "@/generated/prisma/client";
 import { EventList } from "../types/prisma-schema";
 import prisma from "../config/prisma";
+import { cacheLife, cacheTag } from "next/cache";
 
 export interface GetEventsParams {
   // Pagination
@@ -33,6 +34,10 @@ export interface GetEventsResponse {
 }
 
 export const getEvents = async (params: GetEventsParams = {}): Promise<GetEventsResponse> => {
+  "use cache";
+  cacheLife("hours");
+  cacheTag("events", `events-page-${params.page || 1}`);
+
   try {
     // Default values for params:
     const { page = 1, limit = 10, search = "", title, class: className, sortBy = "title", sortOrder = "asc" } = params;

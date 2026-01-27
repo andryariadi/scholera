@@ -30,6 +30,7 @@ export interface GetClassesResponse {
     hasNext: boolean;
     hasPrev: boolean;
   };
+  error?: string;
 }
 
 export const getClasses = async (params: GetClassesParams = {}): Promise<GetClassesResponse> => {
@@ -46,30 +47,45 @@ export const getClasses = async (params: GetClassesParams = {}): Promise<GetClas
     const validLimit = Math.min(Math.max(1, limit), 100);
     const skip = (validPage - 1) * validLimit;
 
-    // WHERE clause:
-    const where: Prisma.ClassWhereInput = {};
+    // andConditions for WHERE clause:
+    const andConditions: Prisma.ClassWhereInput[] = [];
 
     // Search in multiple fields:
     if (search) {
-      where.OR = [
-        { name: { contains: search, mode: "insensitive" } },
-        { capacity: { equals: Number(search) || 0 } },
-        { supervisor: { name: { contains: search, mode: "insensitive" } } },
-        { grade: { level: { equals: Number(search) || 0 } } },
-      ];
+      const searchAsNumber = Number(search);
+      const isNumeric = !isNaN(searchAsNumber) && search.trim() !== "";
+
+      andConditions.push({
+        OR: [
+          { name: { contains: search, mode: "insensitive" } },
+          ...(isNumeric ? [{ capacity: { equals: searchAsNumber } }, { grade: { level: { equals: searchAsNumber } } }] : []),
+          { supervisor: { name: { contains: search, mode: "insensitive" } } },
+        ],
+      });
     }
 
     // Filter by capacity:
     if (capacity) {
-      where.capacity = { equals: Number(capacity) || 0 };
+      andConditions.push({
+        capacity: {
+          equals: Number(capacity),
+        },
+      });
     }
 
     // Filter by grade:
     if (grade) {
-      where.grade = {
-        level: parseInt(grade),
-      };
+      andConditions.push({
+        grade: {
+          level: {
+            equals: Number(grade),
+          },
+        },
+      });
     }
+
+    // Final WHERE clause:
+    const where: Prisma.ClassWhereInput = andConditions.length > 0 ? { AND: andConditions } : {};
 
     // Sorting: Default sorting by name
     const orderBy: Prisma.ClassOrderByWithRelationInput = {};
@@ -124,6 +140,17 @@ export const getClasses = async (params: GetClassesParams = {}): Promise<GetClas
     };
   } catch (error) {
     console.log("Error in getClasses:", error);
+
+    let errorMessage = "An unexpected error occurred";
+
+    if (error instanceof Prisma.PrismaClientKnownRequestError) {
+      errorMessage = `Database error: ${error.code} - ${error.message}`;
+    } else if (error instanceof Prisma.PrismaClientValidationError) {
+      errorMessage = "Invalid query parameters";
+    } else if (error instanceof Error) {
+      errorMessage = error.message;
+    }
+
     return {
       data: [],
       pagination: {
@@ -134,6 +161,7 @@ export const getClasses = async (params: GetClassesParams = {}): Promise<GetClas
         hasNext: false,
         hasPrev: false,
       },
+      error: errorMessage,
     };
   }
 };

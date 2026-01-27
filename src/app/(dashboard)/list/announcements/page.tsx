@@ -1,3 +1,4 @@
+import AnnouncementListContent from "@/components/AnnouncementListContent";
 import FormModal from "@/components/FormModal";
 import TableSearchSkeleton from "@/components/skeletons/SearchBarSkeleton";
 import { TeacherListSkeleton } from "@/components/skeletons/TeacherTableSkeleton";
@@ -22,6 +23,8 @@ export interface AnnouncementListPageProps {
 
 const AnnouncementListPage = ({ searchParams }: AnnouncementListPageProps) => {
   const role = "admin";
+
+  console.log("announcementPage");
 
   return (
     <section className="bg-white p-4 rounded-lg space-y-5 shadow-sm">
@@ -50,7 +53,7 @@ const AnnouncementListPage = ({ searchParams }: AnnouncementListPageProps) => {
 
       {/* Announcement List */}
       <Suspense fallback={<TeacherListSkeleton />}>
-        <AnnouncementListPage searchParams={searchParams} />
+        <AnnouncementListContent searchParams={searchParams} />
       </Suspense>
     </section>
   );

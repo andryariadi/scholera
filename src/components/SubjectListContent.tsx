@@ -12,6 +12,7 @@ const SubjectListContent = async ({ searchParams }: SubjectListPageProps) => {
     page: params.page ? parseInt(params.page) : 1,
     limit: params.limit ? parseInt(params.limit) : 10,
     search: params.search || "",
+    name: params.name,
     teacher: params.teacher,
     lesson: params.lesson,
     sortBy: params.sortBy || "name",
@@ -42,8 +43,6 @@ const SubjectListContent = async ({ searchParams }: SubjectListPageProps) => {
   ];
 
   const role = "admin";
-
-  console.log({ subjectsRes });
 
   const renderRow = (item: SubjectList) => (
     <tr key={item.id} className="border-b border-gray-200 even:bg-slate-50 text-sm hover:bg-scholera-purple-light">

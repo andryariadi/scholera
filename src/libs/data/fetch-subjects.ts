@@ -12,6 +12,7 @@ export interface GetSubjectsParams {
   search?: string;
 
   // Filter
+  name?: string;
   teacher?: string;
   lesson?: string;
 
@@ -30,6 +31,7 @@ export interface GetSubjectsResponse {
     hasNext: boolean;
     hasPrev: boolean;
   };
+  error?: string;
 }
 
 export const getSubjects = async (params: GetSubjectsParams = {}): Promise<GetSubjectsResponse> => {
@@ -39,38 +41,55 @@ export const getSubjects = async (params: GetSubjectsParams = {}): Promise<GetSu
 
   try {
     // Default values for params:
-    const { page = 1, limit = 10, search = "", teacher, lesson, sortBy = "name", sortOrder = "asc" } = params;
+    const { page = 1, limit = 10, search = "", name, teacher, lesson, sortBy = "name", sortOrder = "asc" } = params;
 
     // Validasi:
     const validPage = Math.max(1, page);
     const validLimit = Math.min(Math.max(1, limit), 100);
     const skip = (validPage - 1) * validLimit;
 
-    // WHERE clause: Ganti StudentWhereInput dengan SubjectWhereInput
-    const where: Prisma.SubjectWhereInput = {};
+    // andConditions for WHERE clause:
+    const andConditions: Prisma.SubjectWhereInput[] = [];
 
     // Search in multiple fields:
     if (search) {
-      where.OR = [{ name: { contains: search, mode: "insensitive" } }, { teachers: { some: { name: { contains: search, mode: "insensitive" } } } }, { lessons: { some: { name: { contains: search, mode: "insensitive" } } } }];
+      const searchAsNumber = Number(search);
+      const isNumeric = !isNaN(searchAsNumber) && search.trim() !== "";
+
+      andConditions.push({
+        OR: [{ name: { contains: search, mode: "insensitive" } }, { teachers: { some: { name: { contains: search, mode: "insensitive" } } } }, { lessons: { some: { name: { contains: search, mode: "insensitive" } } } }],
+      });
+    }
+
+    // Filter by name:
+    if (name) {
+      andConditions.push({ name: { contains: name, mode: "insensitive" } });
     }
 
     // Filter by teacher:
     if (teacher) {
-      where.teachers = {
-        some: {
-          OR: [{ name: { contains: teacher, mode: "insensitive" } }, { surname: { contains: teacher, mode: "insensitive" } }],
+      andConditions.push({
+        teachers: {
+          some: {
+            name: { contains: teacher, mode: "insensitive" },
+          },
         },
-      };
+      });
     }
 
     // Filter by lesson:
     if (lesson) {
-      where.lessons = {
-        some: {
-          name: { contains: lesson, mode: "insensitive" },
+      andConditions.push({
+        lessons: {
+          some: {
+            name: { contains: lesson, mode: "insensitive" },
+          },
         },
-      };
+      });
     }
+
+    // Final WHERE clause:
+    const where: Prisma.SubjectWhereInput = andConditions.length > 0 ? { AND: andConditions } : {};
 
     // Sorting:
     const orderBy: Prisma.SubjectOrderByWithRelationInput = {};
@@ -113,6 +132,17 @@ export const getSubjects = async (params: GetSubjectsParams = {}): Promise<GetSu
     };
   } catch (error) {
     console.log("Error in getSubjects:", error);
+
+    let errorMessage = "An unexpected error occurred";
+
+    if (error instanceof Prisma.PrismaClientKnownRequestError) {
+      errorMessage = `Database error: ${error.code} - ${error.message}`;
+    } else if (error instanceof Prisma.PrismaClientValidationError) {
+      errorMessage = "Invalid query parameters";
+    } else if (error instanceof Error) {
+      errorMessage = error.message;
+    }
+
     return {
       data: [],
       pagination: {
@@ -123,6 +153,7 @@ export const getSubjects = async (params: GetSubjectsParams = {}): Promise<GetSu
         hasNext: false,
         hasPrev: false,
       },
+      error: errorMessage,
     };
   }
 };

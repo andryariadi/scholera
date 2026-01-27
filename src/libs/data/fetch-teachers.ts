@@ -12,9 +12,10 @@ export interface GetTeachersParams {
   search?: string;
 
   // Filter
-  subject?: string;
   sex?: "MALE" | "FEMALE";
   bloodType?: string;
+  subject?: string;
+  class?: string;
 
   // Sorting
   sortBy?: "name" | "surname" | "class" | "createdAt";
@@ -32,6 +33,7 @@ export interface GetTeachersResponse {
     hasNext: boolean;
     hasPrev: boolean;
   };
+  error?: string;
 }
 
 export const getTeachers = async (params: GetTeachersParams = {}): Promise<GetTeachersResponse> => {
@@ -41,7 +43,7 @@ export const getTeachers = async (params: GetTeachersParams = {}): Promise<GetTe
 
   try {
     // Default values for params:
-    const { page = 1, limit = 10, search = "", subject, sex: rawSex, bloodType, sortBy = "createdAt", sortOrder = "desc" } = params;
+    const { page = 1, limit = 10, search = "", subject, class: className, sex: rawSex, bloodType, sortBy = "createdAt", sortOrder = "desc" } = params;
 
     let sex: "MALE" | "FEMALE" | undefined;
     if (rawSex) {
@@ -57,46 +59,55 @@ export const getTeachers = async (params: GetTeachersParams = {}): Promise<GetTe
     const validLimit = Math.min(Math.max(1, limit), 100);
     const skip = (validPage - 1) * validLimit;
 
-    // WHERE clause:
-    const where: Prisma.TeacherWhereInput = {};
+    // andConditions for WHERE clause:
+    const andConditions: Prisma.TeacherWhereInput[] = [];
 
     // Search in multiple fields:
     if (search) {
-      where.OR = [
-        { name: { contains: search, mode: "insensitive" } },
-        { surname: { contains: search, mode: "insensitive" } },
-        { username: { contains: search, mode: "insensitive" } },
-        { address: { contains: search, mode: "insensitive" } },
-        { subjects: { some: { name: { contains: search, mode: "insensitive" } } } },
-      ];
+      const searchAsNumber = Number(search);
+      const isNumeric = !isNaN(searchAsNumber) && search.trim() !== "";
+
+      andConditions.push({
+        OR: [
+          { name: { contains: search, mode: "insensitive" } },
+          { surname: { contains: search, mode: "insensitive" } },
+          { username: { contains: search, mode: "insensitive" } },
+          { address: { contains: search, mode: "insensitive" } },
+          { subjects: { some: { name: { contains: search, mode: "insensitive" } } } },
+          { classes: { some: { name: { contains: search, mode: "insensitive" } } } },
+        ],
+      });
     }
 
-    // Filter by subject:
-    if (subject) {
-      where.subjects = {
-        some: { name: subject },
-      };
-    }
-
+    // Filter by sex:
     if (sex) {
-      where.sex = sex;
+      andConditions.push({ sex });
     }
 
     // Filter by blood type:
     if (bloodType) {
-      where.bloodType = bloodType;
+      andConditions.push({ bloodType });
     }
+
+    // Filter by subject:
+    if (subject) {
+      andConditions.push({ subjects: { some: { name: { contains: subject, mode: "insensitive" } } } });
+    }
+
+    // Filter by class:
+    if (className) {
+      andConditions.push({ classes: { some: { name: { contains: className, mode: "insensitive" } } } });
+    }
+
+    // Final WHERE clause:
+    const where: Prisma.TeacherWhereInput = andConditions.length > 0 ? { AND: andConditions } : {};
 
     // ORDER By:
     let orderBy: Prisma.TeacherOrderByWithRelationInput = {};
 
     if (sortBy === "class") {
       // sort based on one to many relation:
-      orderBy = {
-        classes: {
-          _count: sortOrder,
-        },
-      };
+      orderBy = { classes: { _count: sortOrder } };
     } else {
       // sort based on column:
       orderBy = {
@@ -149,7 +160,18 @@ export const getTeachers = async (params: GetTeachersParams = {}): Promise<GetTe
       },
     };
   } catch (error) {
-    console.log("Error in fetching teachers:", error);
+    console.log("Error in getTeachers:", error);
+
+    let errorMessage = "An unexpected error occurred";
+
+    if (error instanceof Prisma.PrismaClientKnownRequestError) {
+      errorMessage = `Database error: ${error.code} - ${error.message}`;
+    } else if (error instanceof Prisma.PrismaClientValidationError) {
+      errorMessage = "Invalid query parameters";
+    } else if (error instanceof Error) {
+      errorMessage = error.message;
+    }
+
     return {
       data: [],
       pagination: {
@@ -160,6 +182,7 @@ export const getTeachers = async (params: GetTeachersParams = {}): Promise<GetTe
         hasNext: false,
         hasPrev: false,
       },
+      error: errorMessage,
     };
   }
 };

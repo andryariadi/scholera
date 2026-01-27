@@ -15,9 +15,10 @@ export async function TeacherListContent({ searchParams }: TeacherListPageProps)
     page: params.page ? parseInt(params.page) : 1,
     limit: params.limit ? parseInt(params.limit) : 10,
     search: params.search || "",
-    subject: params.subject,
     sex: params.sex,
     bloodType: params.bloodType,
+    subject: params.subject,
+    class: params.class,
     sortBy: params.sortBy || "createdAt",
     sortOrder: params.sortOrder || "desc",
   };
