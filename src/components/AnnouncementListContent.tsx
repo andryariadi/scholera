@@ -21,6 +21,8 @@ const AnnouncementListContent = async ({ searchParams }: AnnouncementListPagePro
 
   const announcementRes = await getAnnouncements(queryParams);
 
+  console.log({ announcementRes });
+
   const role = "admin";
 
   const columns = [

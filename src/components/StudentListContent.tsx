@@ -16,8 +16,9 @@ const StudentListContent = async ({ searchParams }: StudentListPageProps) => {
     limit: params.limit ? parseInt(params.limit) : 10,
     search: params.search || "",
     studentId: params.studentId,
-    grade: params.grade,
     sex: params.sex,
+    grade: params.grade,
+    class: params.class,
     sortBy: params.sortBy || "createdAt",
     sortOrder: params.sortOrder || "desc",
   };

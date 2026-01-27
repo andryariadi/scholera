@@ -31,6 +31,7 @@ export interface GetLessonsResponse {
     hasNext: boolean;
     hasPrev: boolean;
   };
+  error?: string;
 }
 
 export const getLessons = async (params: GetLessonsParams = {}): Promise<GetLessonsResponse> => {
@@ -38,49 +39,65 @@ export const getLessons = async (params: GetLessonsParams = {}): Promise<GetLess
     // Default values for params:
     const { page = 1, limit = 10, search = "", name, teacher, class: className, day, sortBy = "name", sortOrder = "asc" } = params;
 
-    console.log({ search, day, sortBy });
-
     // Validasi:
     const validPage = Math.max(1, page);
     const validLimit = Math.min(Math.max(1, limit), 100);
     const skip = (validPage - 1) * validLimit;
 
-    // WHERE clause:
-    const where: Prisma.LessonWhereInput = {};
+    // andConditions for WHERE clause:
+    const andConditions: Prisma.LessonWhereInput[] = [];
+
+    const validDays: Day[] = ["MONDAY", "TUESDAY", "WEDNESDAY", "THURSDAY", "FRIDAY"];
 
     // Search in multiple fields:
     if (search) {
-      where.OR = [
-        { name: { contains: search, mode: "insensitive" } },
-        { teacher: { name: { contains: search, mode: "insensitive" } } },
-        { class: { name: { contains: search, mode: "insensitive" } } },
-        { day: { equals: search.toUpperCase() as Day } },
-      ];
+      const searchUpper = search.toUpperCase();
+      const isValidDay = validDays.includes(searchUpper as Day);
+
+      andConditions.push({
+        OR: [
+          { name: { contains: search, mode: "insensitive" } },
+          { teacher: { name: { contains: search, mode: "insensitive" } } },
+          { class: { name: { contains: search, mode: "insensitive" } } },
+          ...(isValidDay ? [{ day: { equals: searchUpper as Day } }] : []),
+        ],
+      });
     }
 
     // Filter by name:
     if (name) {
-      where.name = { contains: name, mode: "insensitive" };
+      andConditions.push({
+        name: { contains: name, mode: "insensitive" },
+      });
     }
 
     // Filter by teacher:
     if (teacher) {
-      where.teacher = {
-        name: { contains: teacher, mode: "insensitive" },
-      };
+      andConditions.push({
+        teacher: {
+          name: { contains: teacher, mode: "insensitive" },
+        },
+      });
     }
 
     // Filter by class:
     if (className) {
-      where.class = {
-        name: { contains: className, mode: "insensitive" },
-      };
+      andConditions.push({
+        class: {
+          name: { contains: className, mode: "insensitive" },
+        },
+      });
     }
 
     // Filter by day:
     if (day) {
-      where.day = { equals: day as Day };
+      andConditions.push({
+        day: { equals: day.toUpperCase() as Day },
+      });
     }
+
+    // Final WHERE clause:
+    const where: Prisma.LessonWhereInput = andConditions.length > 0 ? { AND: andConditions } : {};
 
     // Sorting
     let orderBy: Prisma.LessonOrderByWithRelationInput = {};
@@ -132,6 +149,17 @@ export const getLessons = async (params: GetLessonsParams = {}): Promise<GetLess
     };
   } catch (error) {
     console.log("Error in getLessons:", error);
+
+    let errorMessage = "An unexpected error occurred";
+
+    if (error instanceof Prisma.PrismaClientKnownRequestError) {
+      errorMessage = `Database error: ${error.code} - ${error.message}`;
+    } else if (error instanceof Prisma.PrismaClientValidationError) {
+      errorMessage = "Invalid query parameters";
+    } else if (error instanceof Error) {
+      errorMessage = error.message;
+    }
+
     return {
       data: [],
       pagination: {
@@ -142,6 +170,7 @@ export const getLessons = async (params: GetLessonsParams = {}): Promise<GetLess
         hasNext: false,
         hasPrev: false,
       },
+      error: errorMessage,
     };
   }
 };

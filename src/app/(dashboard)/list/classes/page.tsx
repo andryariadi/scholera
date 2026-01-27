@@ -7,7 +7,6 @@ import TableSearch from "@/components/TableSearch";
 import TableSort from "@/components/TableSort";
 import { classFilterConfig } from "@/libs/config/filter-configs";
 import { classSortOptions } from "@/libs/config/sort-config";
-import { Filter, SortDesc } from "lucide-react";
 import { Suspense } from "react";
 
 export interface ClassListPageProps {

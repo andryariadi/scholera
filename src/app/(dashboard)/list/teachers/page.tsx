@@ -14,9 +14,10 @@ export interface TeacherListPageProps {
     page?: string;
     limit?: string;
     search?: string;
-    subject?: string;
     sex?: "MALE" | "FEMALE";
     bloodType?: string;
+    subject?: string;
+    class?: string;
     sortBy?: "name" | "surname" | "class" | "createdAt";
     sortOrder?: "asc" | "desc";
   }>;

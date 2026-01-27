@@ -1,4 +1,4 @@
-import { classData, subjectData } from "../constants";
+import { classData, gradeData, subjectData } from "../constants";
 
 export interface FilterOption {
   key: string;
@@ -28,18 +28,13 @@ export const teacherFilterConfig: FilterOption[] = [
     key: "subject",
     label: "Subject",
     type: "select",
-    options: [
-      { value: "Mathematics", label: "Mathematics" },
-      { value: "Science", label: "Science" },
-      { value: "English", label: "English" },
-      { value: "History", label: "History" },
-      { value: "Geography", label: "Geography" },
-      { value: "Physics", label: "Physics" },
-      { value: "Chemistry", label: "Chemistry" },
-      { value: "Biology", label: "Biology" },
-      { value: "Computer Science", label: "Computer Science" },
-      { value: "Art", label: "Art" },
-    ], // Much better to if options fetch from API
+    options: subjectData.map((subject) => ({ value: subject.name, label: subject.name })),
+  },
+  {
+    key: "class",
+    label: "Class",
+    type: "select",
+    options: classData.map((clss) => ({ value: clss.name, label: clss.name })),
   },
 ];
 
@@ -58,14 +53,13 @@ export const studentFilterConfig: FilterOption[] = [
     key: "grade",
     label: "Grade",
     type: "select",
-    options: [
-      { value: "1", label: "Grade 1" },
-      { value: "2", label: "Grade 2" },
-      { value: "3", label: "Grade 3" },
-      { value: "4", label: "Grade 4" },
-      { value: "5", label: "Grade 5" },
-      { value: "6", label: "Grade 6" },
-    ],
+    options: gradeData.map((grade) => ({ value: grade.value, label: grade.label })),
+  },
+  {
+    key: "class",
+    label: "Class",
+    type: "select",
+    options: classData.map((clss) => ({ value: clss.name, label: clss.name })),
   },
 ];
 
@@ -91,7 +85,7 @@ export const subjectFilterConfig: FilterOption[] = [
     key: "name",
     label: "Subject Name",
     type: "select",
-    options: [], // Fetch from API
+    options: subjectData.map((subject) => ({ value: subject.name, label: subject.name })),
   },
 ];
 
@@ -109,32 +103,17 @@ export const classFilterConfig: FilterOption[] = [
     key: "grade",
     label: "Grade",
     type: "select",
-    options: Array.from({ length: 6 }, (_, i) => ({
-      value: String(i + 1),
-      label: String(i + 1),
-    })),
+    options: gradeData.map((grade) => ({ value: grade.value, label: grade.label })),
   },
 ];
 
 // Lessons Filter Configuration:
 export const lessonFilterConfig: FilterOption[] = [
   {
-    key: "name",
-    label: "Lesson Name",
-    type: "select",
-    options: [],
-  },
-  {
     key: "class",
     label: "Class",
     type: "select",
-    options: [],
-  },
-  {
-    key: "teacher",
-    label: "Teacher",
-    type: "select",
-    options: [],
+    options: classData.map((clss) => ({ value: clss.name, label: clss.name })),
   },
   {
     key: "day",

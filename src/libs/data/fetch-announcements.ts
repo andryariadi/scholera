@@ -1,6 +1,7 @@
 import { Prisma } from "@/generated/prisma/client";
 import { AnnouncementList } from "../types/prisma-schema";
 import prisma from "../config/prisma";
+import { cacheLife, cacheTag } from "next/cache";
 
 export interface GetAnnouncementsParams {
   // Pagination
@@ -33,6 +34,10 @@ export interface GetAnnouncementsResponse {
 }
 
 export const getAnnouncements = async (params: GetAnnouncementsParams = {}): Promise<GetAnnouncementsResponse> => {
+  "use cache";
+  cacheLife("hours");
+  cacheTag("announcements", `announcements-page-${params.page || 1}`);
+
   try {
     // Default values for params:
     const { page = 1, limit = 10, search = "", title, class: className, sortBy = "title", sortOrder = "asc" } = params;
@@ -90,9 +95,7 @@ export const getAnnouncements = async (params: GetAnnouncementsParams = {}): Pro
           class: true,
         },
       }),
-      prisma.announcement.count({
-        where,
-      }),
+      prisma.announcement.count({ where }),
     ]);
 
     const totalPages = Math.ceil(total / validLimit);
@@ -109,7 +112,7 @@ export const getAnnouncements = async (params: GetAnnouncementsParams = {}): Pro
       },
     };
   } catch (error) {
-    console.log("Error in getEvents:", error);
+    console.log("Error in getAnnouncements:", error);
 
     let errorMessage = "An unexpected error occurred";
 

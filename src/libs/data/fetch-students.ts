@@ -1,7 +1,7 @@
-import { Prisma } from "@/generated/prisma/browser";
 import { StudentList } from "../types/prisma-schema";
 import prisma from "../config/prisma";
 import { cacheLife, cacheTag } from "next/cache";
+import { Prisma } from "@/generated/prisma/client";
 
 export interface GetStudentParams {
   // Pagination
@@ -12,12 +12,12 @@ export interface GetStudentParams {
   search?: string;
 
   // Filter
-  studentId?: string;
-  grade?: string;
   sex?: "MALE" | "FEMALE";
+  class?: string;
+  grade?: string;
 
   // Sorting
-  sortBy?: "name" | "surname" | "grade" | "createdAt";
+  sortBy?: "name" | "grade" | "createdAt";
   sortOrder?: "asc" | "desc";
 }
 
@@ -31,6 +31,7 @@ export interface GetStudentsResponse {
     hasNext: boolean;
     hasPrev: boolean;
   };
+  error?: string;
 }
 
 export const getStudents = async (params: GetStudentParams = {}): Promise<GetStudentsResponse> => {
@@ -39,7 +40,7 @@ export const getStudents = async (params: GetStudentParams = {}): Promise<GetStu
   cacheTag("students", `students-page-${params.page || 1}`);
 
   try {
-    const { page = 1, limit = 10, search = "", grade, sex: rawSex, sortBy = "createdAt", sortOrder = "desc" } = params;
+    const { page = 1, limit = 10, search = "", grade, class: className, sex: rawSex, sortBy = "createdAt", sortOrder = "desc" } = params;
 
     let sex: "MALE" | "FEMALE" | undefined;
     if (rawSex) {
@@ -54,25 +55,41 @@ export const getStudents = async (params: GetStudentParams = {}): Promise<GetStu
     const validLimit = Math.min(Math.max(1, limit), 100);
     const skip = (validPage - 1) * validLimit;
 
-    // WHERE clause:
-    const where: Prisma.StudentWhereInput = {};
+    // andConditions for WHERE clause:
+    const andConditions: Prisma.StudentWhereInput[] = [];
 
     // Search in multiple fields:
     if (search) {
-      where.OR = [{ name: { contains: search, mode: "insensitive" } }, { surname: { contains: search, mode: "insensitive" } }, { address: { contains: search, mode: "insensitive" } }, { phone: { contains: search, mode: "insensitive" } }];
-    }
+      const searchAsNumber = Number(search);
+      const isNumeric = !isNaN(searchAsNumber) && search.trim() !== "";
 
-    // Filter by grade:
-    if (grade) {
-      where.grade = {
-        level: parseInt(grade),
-      };
+      andConditions.push({
+        OR: [
+          { name: { contains: search, mode: "insensitive" } },
+          { address: { contains: search, mode: "insensitive" } },
+          { class: { name: { contains: search, mode: "insensitive" } } },
+          ...(isNumeric ? [{ grade: { level: searchAsNumber } }] : []),
+        ],
+      });
     }
 
     // Filter by sex:
     if (sex) {
-      where.sex = sex;
+      andConditions.push({ sex });
     }
+
+    // Filter by grade:
+    if (grade) {
+      andConditions.push({ grade: { level: parseInt(grade) } });
+    }
+
+    // Filter by class
+    if (className) {
+      andConditions.push({ class: { name: className } });
+    }
+
+    // Final WHERE clause:
+    const where: Prisma.StudentWhereInput = andConditions.length > 0 ? { AND: andConditions } : {};
 
     // Order By:
     const orderBy: Prisma.StudentOrderByWithRelationInput = {};
@@ -119,7 +136,18 @@ export const getStudents = async (params: GetStudentParams = {}): Promise<GetStu
       },
     };
   } catch (error) {
-    console.log("Error in fetching students:", error);
+    console.log("Error in getTeachers:", error);
+
+    let errorMessage = "An unexpected error occurred";
+
+    if (error instanceof Prisma.PrismaClientKnownRequestError) {
+      errorMessage = `Database error: ${error.code} - ${error.message}`;
+    } else if (error instanceof Prisma.PrismaClientValidationError) {
+      errorMessage = "Invalid query parameters";
+    } else if (error instanceof Error) {
+      errorMessage = error.message;
+    }
+
     return {
       data: [],
       pagination: {
@@ -130,6 +158,7 @@ export const getStudents = async (params: GetStudentParams = {}): Promise<GetStu
         hasNext: false,
         hasPrev: false,
       },
+      error: errorMessage,
     };
   }
 };

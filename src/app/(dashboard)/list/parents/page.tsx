@@ -7,7 +7,6 @@ import TableSearch from "@/components/TableSearch";
 import TableSort from "@/components/TableSort";
 import { parentFilterConfig } from "@/libs/config/filter-configs";
 import { parentSortOptions } from "@/libs/config/sort-config";
-import { Filter, SortDesc } from "lucide-react";
 import { Suspense } from "react";
 
 export interface ParentListPageProps {
@@ -15,10 +14,10 @@ export interface ParentListPageProps {
     page?: string;
     limit?: string;
     search?: string;
-    student?: string;
     address?: string;
-    phone?: string;
-    sortBy?: "name" | "surname" | "phone" | "address" | "email" | "createdAt";
+    email?: string;
+    student?: string;
+    sortBy?: "name" | "username" | "phone" | "address" | "email" | "createdAt";
     sortOrder?: "asc" | "desc";
   }>;
 }
