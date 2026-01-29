@@ -2,6 +2,7 @@ import { Prisma } from "@/generated/prisma/client";
 import { ParentList } from "../types/prisma-schema";
 import prisma from "../config/prisma";
 import { cacheLife, cacheTag } from "next/cache";
+import { calculatePagination, emptyPaginationResponse, handlePrismaError, validatePagination } from "../utils";
 
 export interface GetParentsParams {
   // Pagination
@@ -43,10 +44,8 @@ export const getParents = async (params: GetParentsParams = {}): Promise<GetPare
     // Default values for params:
     const { page = 1, limit = 10, search = "", student, address, email, sortBy = "createdAt", sortOrder = "desc" } = params;
 
-    // Validasi:
-    const validPage = Math.max(1, page);
-    const validLimit = Math.min(Math.max(1, limit), 100);
-    const skip = (validPage - 1) * validLimit;
+    //  Validate pagination:
+    const { validPage, validLimit, skip } = validatePagination({ page, limit });
 
     // andConditions for WHERE clause:
     const andConditions: Prisma.ParentWhereInput[] = [];
@@ -105,43 +104,16 @@ export const getParents = async (params: GetParentsParams = {}): Promise<GetPare
       prisma.parent.count({ where }),
     ]);
 
-    const totalPages = Math.ceil(total / validLimit);
+    // Calculate pagination:
+    const pagination = calculatePagination(total, validPage, validLimit);
 
     return {
       data: parents as ParentList[],
-      pagination: {
-        total,
-        page: validPage,
-        limit: validLimit,
-        totalPages,
-        hasNext: validPage < totalPages,
-        hasPrev: validPage > 1,
-      },
+      pagination,
     };
   } catch (error) {
     console.log("Error in getParents:", error);
 
-    let errorMessage = "An unexpected error occurred";
-
-    if (error instanceof Prisma.PrismaClientKnownRequestError) {
-      errorMessage = `Database error: ${error.code} - ${error.message}`;
-    } else if (error instanceof Prisma.PrismaClientValidationError) {
-      errorMessage = "Invalid query parameters";
-    } else if (error instanceof Error) {
-      errorMessage = error.message;
-    }
-
-    return {
-      data: [],
-      pagination: {
-        total: 0,
-        page: 1,
-        limit: 10,
-        totalPages: 1,
-        hasNext: false,
-        hasPrev: false,
-      },
-      error: errorMessage,
-    };
+    return emptyPaginationResponse(handlePrismaError(error));
   }
 };
