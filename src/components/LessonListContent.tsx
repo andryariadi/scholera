@@ -16,6 +16,7 @@ const LessonListContent = async ({ searchParams }: LessonListPageProps) => {
     day: params.day,
     teacher: params.teacher,
     class: params.class,
+    classId: params.classId,
     sortBy: params.sortBy || "name",
     sortOrder: params.sortOrder || "asc",
   };
@@ -48,6 +49,8 @@ const LessonListContent = async ({ searchParams }: LessonListPageProps) => {
       accessor: "action",
     },
   ];
+
+  console.log({ lessonsRes });
 
   const renderRow = (item: LessonList) => (
     <tr key={item.id} className="border-b border-gray-200 even:bg-slate-50 text-sm hover:bg-scholera-purple-light">

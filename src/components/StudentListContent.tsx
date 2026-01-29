@@ -19,6 +19,7 @@ const StudentListContent = async ({ searchParams }: StudentListPageProps) => {
     sex: params.sex,
     grade: params.grade,
     class: params.class,
+    teacher: params.teacher,
     sortBy: params.sortBy || "createdAt",
     sortOrder: params.sortOrder || "desc",
   };
@@ -71,7 +72,11 @@ const StudentListContent = async ({ searchParams }: StudentListPageProps) => {
 
         <div className="flex flex-col">
           <h3 className="font-semibold">{item.name}</h3>
-          <p className="text-xs text-gray-500">{item.class.name}</p>
+          <div className="flex items-center gap-2">
+            {" "}
+            <p className="text-xs text-gray-500">{item.class.name}</p>
+            <p className="text-xs text-gray-500">{item.class.supervisor.name}</p>
+          </div>
         </div>
       </td>
       {/* Student-ID */}

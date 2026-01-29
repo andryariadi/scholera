@@ -161,7 +161,7 @@ async function Shortcuts(params: { params: Promise<{ id: string }> }) {
         <Link href={`/list/assignments?classId=${student?.class.id}`} className="p-3 rounded-md bg-scholera-sky-light">
           Student&apos;s Assignments
         </Link>
-        <Link href={`/list/results?studentId=${student?.id}`} className="p-3 rounded-md bg-scholera-yellow-light">
+        <Link href={`/list/results?student=${student?.id}`} className="p-3 rounded-md bg-scholera-yellow-light">
           Student&apos;s Results
         </Link>
       </div>

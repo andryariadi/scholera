@@ -18,7 +18,7 @@ export interface StudentListPageProps {
     sex?: "MALE" | "FEMALE";
     grade?: string;
     class?: string;
-    bloodType?: string;
+    teacher?: string;
     sortBy?: "name" | "grade" | "createdAt";
     sortOrder?: "asc" | "desc";
   }>;

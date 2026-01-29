@@ -105,6 +105,12 @@ export const classFilterConfig: FilterOption[] = [
     type: "select",
     options: gradeData.map((grade) => ({ value: grade.value, label: grade.label })),
   },
+  {
+    key: "supervisor",
+    label: "Supervisor",
+    type: "select",
+    options: [],
+  },
 ];
 
 // Lessons Filter Configuration:

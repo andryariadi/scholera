@@ -23,8 +23,6 @@ const ResultListContent = async ({ searchParams }: ResultListPageProps) => {
 
   const resultsRes = await getResults(queryParams);
 
-  console.log({ resultsRes });
-
   const role = "admin";
 
   const columns = [

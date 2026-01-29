@@ -16,6 +16,7 @@ export interface ClassListPageProps {
     search?: string;
     capacity?: number;
     grade?: string;
+    supervisor?: string;
     sortBy?: "name" | "grade" | "capacity";
     sortOrder?: "asc" | "desc";
   }>;

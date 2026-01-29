@@ -18,6 +18,7 @@ export interface TeacherListPageProps {
     bloodType?: string;
     subject?: string;
     class?: string;
+    classId?: string;
     sortBy?: "name" | "surname" | "class" | "createdAt";
     sortOrder?: "asc" | "desc";
   }>;

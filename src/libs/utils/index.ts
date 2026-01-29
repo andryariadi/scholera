@@ -1,3 +1,5 @@
+import { Prisma } from "@/generated/prisma/client";
+
 export const formatDate = (dateString: Date) => {
   const months = ["Januari", "Februari", "Maret", "April", "Mei", "Juni", "Juli", "Agustus", "September", "Oktober", "November", "Desember"];
 
@@ -77,3 +79,91 @@ export const adjustScheduleToCurrentWeek = (lessons: { title: string; start: Dat
     };
   });
 };
+
+// Validation pagination:
+export interface PaginationParams {
+  page?: number;
+  limit?: number;
+}
+
+export interface ValidatedPagination {
+  validPage: number;
+  validLimit: number;
+  skip: number;
+}
+
+export const validatePagination = (params: PaginationParams): ValidatedPagination => {
+  const page = params.page || 1;
+  const limit = params.limit || 10;
+
+  const validPage = Math.max(1, page);
+  const validLimit = Math.min(Math.max(1, limit), 100);
+  const skip = (validPage - 1) * validLimit;
+
+  return { validPage, validLimit, skip };
+};
+
+// Calculate pagination:
+export interface PaginationMeta {
+  total: number;
+  page: number;
+  limit: number;
+  totalPages: number;
+  hasNext: boolean;
+  hasPrev: boolean;
+}
+
+export const calculatePagination = (total: number, page: number, limit: number): PaginationMeta => {
+  const totalPages = Math.ceil(total / limit);
+
+  return {
+    total,
+    page,
+    limit,
+    totalPages,
+    hasNext: page < totalPages,
+    hasPrev: page > 1,
+  };
+};
+
+// Build WHERE clause:
+export const buildWhereClause = <T>(conditions: T[]): T | { AND: T[] } => {
+  return conditions.length > 0 ? ({ AND: conditions } as { AND: T[] }) : ({} as T);
+};
+
+// Handle Prisma errors:
+export const handlePrismaError = (error: unknown): string => {
+  if (error instanceof Prisma.PrismaClientKnownRequestError) {
+    return `Database error: ${error.code} - ${error.message}`;
+  }
+
+  if (error instanceof Prisma.PrismaClientValidationError) {
+    return "Invalid query parameters";
+  }
+
+  if (error instanceof Error) {
+    return error.message;
+  }
+
+  return "An unexpected error occurred";
+};
+
+// Empty pagination response:
+export const emptyPaginationResponse = <T>(
+  errorMessage?: string,
+): {
+  data: T[];
+  pagination: PaginationMeta;
+  error?: string;
+} => ({
+  data: [],
+  pagination: {
+    total: 0,
+    page: 1,
+    limit: 10,
+    totalPages: 0,
+    hasNext: false,
+    hasPrev: false,
+  },
+  error: errorMessage,
+});
