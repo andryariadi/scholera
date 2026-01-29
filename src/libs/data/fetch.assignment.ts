@@ -15,6 +15,7 @@ export interface GetAssignmentsParams {
   lesson?: string;
   subject?: string;
   class?: string;
+  classId?: string;
   teacher?: string;
   result?: string;
 
@@ -43,9 +44,7 @@ export const getAssignments = async (params: GetAssignmentsParams = {}): Promise
 
   try {
     // Default values for params:
-    const { page = 1, limit = 10, search = "", lesson, subject, class: className, teacher, result, sortBy = "subject", sortOrder = "asc" } = params;
-
-    console.log({ search, subject, sortBy });
+    const { page = 1, limit = 10, search = "", lesson, subject, class: className, classId, teacher, result, sortBy = "subject", sortOrder = "asc" } = params;
 
     // Validasi:
     const validPage = Math.max(1, page);
@@ -115,12 +114,23 @@ export const getAssignments = async (params: GetAssignmentsParams = {}): Promise
       });
     }
 
+    // Filter classId
+    if (classId) {
+      andConditions.push({
+        lesson: {
+          class: {
+            id: { contains: classId, mode: "insensitive" },
+          },
+        },
+      });
+    }
+
     // Filter teacher
     if (teacher) {
       andConditions.push({
         lesson: {
           teacher: {
-            name: { contains: teacher, mode: "insensitive" },
+            id: { contains: teacher, mode: "insensitive" },
           },
         },
       });

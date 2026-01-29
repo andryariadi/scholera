@@ -16,6 +16,7 @@ const AssignmentListContent = async ({ searchParams }: AssignmentListPageProps) 
     lesson: params.lesson,
     subject: params.subject,
     class: params.class,
+    classId: params.classId,
     teacher: params.teacher,
     result: params.result,
     sortBy: params.sortBy || "subject",

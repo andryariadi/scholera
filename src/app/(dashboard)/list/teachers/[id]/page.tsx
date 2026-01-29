@@ -143,19 +143,19 @@ async function Shortcuts({ params }: { params: Promise<{ id: string }> }) {
       <h1 className="text-xl font-semibold">Shortcuts</h1>
 
       <div className="flex flex-wrap gap-4 text-xs text-gray-500">
-        <Link href={`/list/classes?supervisorId=${teacher?.id}`} className="p-3 rounded-md bg-scholera-sky-light">
+        <Link href={`/list/classes?supervisor=${teacher?.id}`} className="p-3 rounded-md bg-scholera-sky-light">
           Teacher&apos;s Classes
         </Link>
-        <Link href={`/list/students?teacherId=${teacher?.id}`} className="p-3 rounded-md bg-scholera-purple-light">
+        <Link href={`/list/students?teacher=${teacher?.id}`} className="p-3 rounded-md bg-scholera-purple-light">
           Teacher&apos;s Students
         </Link>
-        <Link href={`/list/lessons?teacherId=${teacher?.id}`} className="p-3 rounded-md bg-scholera-yellow-light">
+        <Link href={`/list/lessons?teacher=${teacher?.id}`} className="p-3 rounded-md bg-scholera-yellow-light">
           Teacher&apos;s Lessons
         </Link>
-        <Link href={`/list/exams?teacherId=${teacher?.id}`} className="p-3 rounded-md bg-pink-50">
+        <Link href={`/list/exams?teacher=${teacher?.id}`} className="p-3 rounded-md bg-pink-50">
           Teacher&apos;s Exams
         </Link>
-        <Link href={`/list/assignments?teacherId=${teacher?.id}`} className="p-3 rounded-md bg-scholera-sky-light">
+        <Link href={`/list/assignments?teacher=${teacher?.id}`} className="p-3 rounded-md bg-scholera-sky-light">
           Teacher&apos;s Assignments
         </Link>
       </div>

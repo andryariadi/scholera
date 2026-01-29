@@ -72,7 +72,7 @@ export const getResults = async (params: GetResultsParams = {}): Promise<GetResu
     if (student) {
       andConditions.push({
         student: {
-          name: { contains: student, mode: "insensitive" },
+          id: { contains: student, mode: "insensitive" },
         },
       });
     }

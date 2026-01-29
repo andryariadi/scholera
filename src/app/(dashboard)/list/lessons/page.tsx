@@ -18,6 +18,7 @@ export interface LessonListPageProps {
     day?: string;
     teacher?: string;
     class?: string;
+    classId?: string;
     sortBy?: "name" | "class" | "teacher";
     sortOrder?: "asc" | "desc";
   }>;

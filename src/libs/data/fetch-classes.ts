@@ -14,6 +14,7 @@ export interface GetClassesParams {
   // Filter
   capacity?: number;
   grade?: string;
+  supervisor?: string;
 
   // Sorting
   sortBy?: "name" | "grade" | "capacity";
@@ -40,7 +41,7 @@ export const getClasses = async (params: GetClassesParams = {}): Promise<GetClas
 
   try {
     // Default values for params:
-    const { page = 1, limit = 10, search = "", capacity, grade, sortBy = "name", sortOrder = "asc" } = params;
+    const { page = 1, limit = 10, search = "", capacity, grade, supervisor, sortBy = "name", sortOrder = "asc" } = params;
 
     // Validasi:
     const validPage = Math.max(1, page);
@@ -79,6 +80,17 @@ export const getClasses = async (params: GetClassesParams = {}): Promise<GetClas
         grade: {
           level: {
             equals: Number(grade),
+          },
+        },
+      });
+    }
+
+    // Filter by supervisor:
+    if (supervisor) {
+      andConditions.push({
+        supervisor: {
+          id: {
+            equals: supervisor,
           },
         },
       });

@@ -17,6 +17,7 @@ export interface AssignmentListPageProps {
     lesson?: string;
     subject?: string;
     class?: string;
+    classId?: string;
     teacher?: string;
     result?: string;
     sortBy?: "title" | "lesson" | "subject" | "class" | "teacher" | "startTime";

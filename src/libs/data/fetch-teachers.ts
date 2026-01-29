@@ -16,6 +16,7 @@ export interface GetTeachersParams {
   bloodType?: string;
   subject?: string;
   class?: string;
+  classId?: string;
 
   // Sorting
   sortBy?: "name" | "surname" | "class" | "createdAt";
@@ -43,7 +44,7 @@ export const getTeachers = async (params: GetTeachersParams = {}): Promise<GetTe
 
   try {
     // Default values for params:
-    const { page = 1, limit = 10, search = "", subject, class: className, sex: rawSex, bloodType, sortBy = "createdAt", sortOrder = "desc" } = params;
+    const { page = 1, limit = 10, search = "", subject, class: className, classId, sex: rawSex, bloodType, sortBy = "createdAt", sortOrder = "desc" } = params;
 
     let sex: "MALE" | "FEMALE" | undefined;
     if (rawSex) {
@@ -97,6 +98,11 @@ export const getTeachers = async (params: GetTeachersParams = {}): Promise<GetTe
     // Filter by class:
     if (className) {
       andConditions.push({ classes: { some: { name: { contains: className, mode: "insensitive" } } } });
+    }
+
+    // Filter by classId:
+    if (classId) {
+      andConditions.push({ classes: { some: { id: classId } } });
     }
 
     // Final WHERE clause:

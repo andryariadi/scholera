@@ -15,6 +15,7 @@ export interface GetLessonsParams {
   day?: string;
   teacher?: string;
   class?: string;
+  classId?: string;
 
   // Sorting
   sortBy?: "name" | "day" | "class" | "teacher";
@@ -37,7 +38,7 @@ export interface GetLessonsResponse {
 export const getLessons = async (params: GetLessonsParams = {}): Promise<GetLessonsResponse> => {
   try {
     // Default values for params:
-    const { page = 1, limit = 10, search = "", name, teacher, class: className, day, sortBy = "name", sortOrder = "asc" } = params;
+    const { page = 1, limit = 10, search = "", name, teacher, class: className, classId, day, sortBy = "name", sortOrder = "asc" } = params;
 
     // Validasi:
     const validPage = Math.max(1, page);
@@ -75,7 +76,7 @@ export const getLessons = async (params: GetLessonsParams = {}): Promise<GetLess
     if (teacher) {
       andConditions.push({
         teacher: {
-          name: { contains: teacher, mode: "insensitive" },
+          id: teacher,
         },
       });
     }
@@ -85,6 +86,15 @@ export const getLessons = async (params: GetLessonsParams = {}): Promise<GetLess
       andConditions.push({
         class: {
           name: { contains: className, mode: "insensitive" },
+        },
+      });
+    }
+
+    // Filter by classId:
+    if (classId) {
+      andConditions.push({
+        class: {
+          id: { contains: classId, mode: "insensitive" },
         },
       });
     }
@@ -124,7 +134,11 @@ export const getLessons = async (params: GetLessonsParams = {}): Promise<GetLess
         take: validLimit,
         include: {
           subject: true,
-          class: true,
+          class: {
+            include: {
+              students: true,
+            },
+          },
           teacher: true,
           exams: true,
           assignments: true,

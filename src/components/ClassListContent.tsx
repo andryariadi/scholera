@@ -14,6 +14,7 @@ const ClassListContent = async ({ searchParams }: ClassListPageProps) => {
     search: params.search || "",
     capacity: params.capacity,
     grade: params.grade,
+    supervisor: params.supervisor,
     sortBy: params.sortBy || "name",
     sortOrder: params.sortOrder || "asc",
   };
@@ -56,7 +57,7 @@ const ClassListContent = async ({ searchParams }: ClassListPageProps) => {
       {/* Grade */}
       <td className="hidden md:table-cell">{item.grade.level}</td>
       {/* Supervisor */}
-      <td className="hidden md:table-cell">{item.supervisor.username}</td>
+      <td className="hidden md:table-cell">{item.supervisor.name}</td>
       {/* Actions */}
       <td>
         <div className="flex items-center gap-2">

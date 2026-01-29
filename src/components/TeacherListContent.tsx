@@ -19,6 +19,7 @@ export async function TeacherListContent({ searchParams }: TeacherListPageProps)
     bloodType: params.bloodType,
     subject: params.subject,
     class: params.class,
+    classId: params.classId,
     sortBy: params.sortBy || "createdAt",
     sortOrder: params.sortOrder || "desc",
   };

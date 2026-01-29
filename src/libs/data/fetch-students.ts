@@ -15,6 +15,7 @@ export interface GetStudentParams {
   sex?: "MALE" | "FEMALE";
   class?: string;
   grade?: string;
+  teacher?: string;
 
   // Sorting
   sortBy?: "name" | "grade" | "createdAt";
@@ -40,7 +41,7 @@ export const getStudents = async (params: GetStudentParams = {}): Promise<GetStu
   cacheTag("students", `students-page-${params.page || 1}`);
 
   try {
-    const { page = 1, limit = 10, search = "", grade, class: className, sex: rawSex, sortBy = "createdAt", sortOrder = "desc" } = params;
+    const { page = 1, limit = 10, search = "", teacher, grade, class: className, sex: rawSex, sortBy = "createdAt", sortOrder = "desc" } = params;
 
     let sex: "MALE" | "FEMALE" | undefined;
     if (rawSex) {
@@ -88,6 +89,11 @@ export const getStudents = async (params: GetStudentParams = {}): Promise<GetStu
       andConditions.push({ class: { name: className } });
     }
 
+    // Filter by teacher:
+    if (teacher) {
+      andConditions.push({ class: { supervisorId: teacher } });
+    }
+
     // Final WHERE clause:
     const where: Prisma.StudentWhereInput = andConditions.length > 0 ? { AND: andConditions } : {};
 
@@ -113,7 +119,7 @@ export const getStudents = async (params: GetStudentParams = {}): Promise<GetStu
         take: validLimit,
         include: {
           parent: true,
-          class: true,
+          class: { include: { supervisor: true } },
           grade: true,
           attendances: true,
           results: true,
