@@ -1,3 +1,4 @@
+import { UserButton } from "@clerk/nextjs";
 import { Search, MessageSquare, Bell } from "lucide-react";
 import Image from "next/image";
 
@@ -32,7 +33,7 @@ const Navbar = () => {
           </div>
 
           {/* Avatar */}
-          <Image src="/avatar.png" alt="Avatar" width={32} height={32} className="rounded-full cursor-pointer" />
+          <UserButton />
         </div>
       </div>
     </nav>
