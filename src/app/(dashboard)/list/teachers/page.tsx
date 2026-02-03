@@ -8,6 +8,8 @@ import TableFilter from "@/components/TableFilter";
 import { teacherFilterConfig } from "@/libs/config/filter-configs";
 import TableSort from "@/components/TableSort";
 import { teacherSortOptions } from "@/libs/config/sort-config";
+import { getCurrentUserRole } from "@/libs/utils";
+import { UserRole } from "@/libs/types/prisma-schema";
 
 export interface TeacherListPageProps {
   searchParams: Promise<{
@@ -22,10 +24,14 @@ export interface TeacherListPageProps {
     sortBy?: "name" | "surname" | "class" | "createdAt";
     sortOrder?: "asc" | "desc";
   }>;
+  currentUserId?: string | null;
+  currentUserRole?: UserRole | null;
 }
 
-export default function TeacherListPage({ searchParams }: TeacherListPageProps) {
-  const role = "admin";
+export default async function TeacherListPage({ searchParams }: TeacherListPageProps) {
+  const userRes = await getCurrentUserRole();
+  const role = userRes?.role;
+  const userId = userRes?.userId;
 
   return (
     <section className="bg-white shadow-xs p-4 rounded-lg space-y-5">
@@ -52,7 +58,7 @@ export default function TeacherListPage({ searchParams }: TeacherListPageProps) 
 
       {/* Teacher List */}
       <Suspense fallback={<TeacherListSkeleton />}>
-        <TeacherListContent searchParams={searchParams} />
+        <TeacherListContent searchParams={searchParams} currentUserId={userId} currentUserRole={role} />
       </Suspense>
     </section>
   );

@@ -46,3 +46,11 @@ export type ResultList = Result & { student: Student } & { exam: Exam | null } &
 export type EventList = Event & { class: Class };
 
 export type AnnouncementList = Announcement & { class: Class };
+
+export type UserRole = "admin" | "teacher" | "student" | "parent";
+
+export type UserMetadata = {
+  metadata?: {
+    role: UserRole;
+  };
+};

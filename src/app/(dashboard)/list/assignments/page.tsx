@@ -7,6 +7,8 @@ import TableSearch from "@/components/TableSearch";
 import TableSort from "@/components/TableSort";
 import { assignmentFilterConfig } from "@/libs/config/filter-configs";
 import { assignmentSortOptions } from "@/libs/config/sort-config";
+import { UserRole } from "@/libs/types/prisma-schema";
+import { getCurrentUserRole } from "@/libs/utils";
 import { Suspense } from "react";
 
 export interface AssignmentListPageProps {
@@ -23,10 +25,14 @@ export interface AssignmentListPageProps {
     sortBy?: "title" | "lesson" | "subject" | "class" | "teacher" | "startTime";
     sortOrder?: "asc" | "desc";
   }>;
+  currentUserId?: string | null;
+  currentUserRole?: UserRole | null;
 }
 
-const AssignmentListPage = ({ searchParams }: AssignmentListPageProps) => {
-  const role = "admin";
+const AssignmentListPage = async ({ searchParams }: AssignmentListPageProps) => {
+  const userRes = await getCurrentUserRole();
+  const userRole = userRes?.role;
+  const userId = userRes?.userId;
 
   return (
     <section className="bg-white p-4 rounded-lg space-y-5 shadow-sm">
@@ -49,14 +55,14 @@ const AssignmentListPage = ({ searchParams }: AssignmentListPageProps) => {
             <TableSort options={assignmentSortOptions} />
 
             {/* Modal Button */}
-            {role === "admin" && <FormModal table="assignment" type="create" />}
+            {(userRole === "admin" || userRole === "teacher") && <FormModal table="assignment" type="create" />}
           </div>
         </div>
       </div>
 
       {/* Assignment List */}
       <Suspense fallback={<TeacherListSkeleton />}>
-        <AssignmentListContent searchParams={searchParams} />
+        <AssignmentListContent searchParams={searchParams} currentUserId={userId} currentUserRole={userRole} />
       </Suspense>
     </section>
   );

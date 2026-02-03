@@ -7,6 +7,8 @@ import TableSearch from "@/components/TableSearch";
 import TableSort from "@/components/TableSort";
 import { subjectFilterConfig } from "@/libs/config/filter-configs";
 import { subjectSortOptions } from "@/libs/config/sort-config";
+import { UserRole } from "@/libs/types/prisma-schema";
+import { getCurrentUserRole } from "@/libs/utils";
 import { Suspense } from "react";
 
 export interface SubjectListPageProps {
@@ -20,10 +22,14 @@ export interface SubjectListPageProps {
     sortBy?: "name";
     sortOrder?: "asc" | "desc";
   }>;
+  currentUserId?: string | null;
+  currentUserRole?: UserRole | null;
 }
 
-const SubjectListPage = ({ searchParams }: SubjectListPageProps) => {
-  const role = "admin";
+const SubjectListPage = async ({ searchParams }: SubjectListPageProps) => {
+  const userRes = await getCurrentUserRole();
+  const role = userRes?.role;
+  const userId = userRes?.userId;
 
   return (
     <section className="bg-white p-4 rounded-lg space-y-5 shadow-sm">
@@ -45,19 +51,14 @@ const SubjectListPage = ({ searchParams }: SubjectListPageProps) => {
             <TableSort options={subjectSortOptions} />
 
             {/* Modal Button */}
-            {role === "admin" && (
-              // <button className="action-btn">
-              //   <Plus size={14} />
-              // </button>
-              <FormModal table="subject" type="create" />
-            )}
+            {role === "admin" && <FormModal table="subject" type="create" />}
           </div>
         </div>
       </div>
 
       {/* Subjects List */}
       <Suspense fallback={<TeacherListSkeleton />}>
-        <SubjectListContent searchParams={searchParams} />
+        <SubjectListContent searchParams={searchParams} currentUserId={userId} currentUserRole={role} />
       </Suspense>
     </section>
   );

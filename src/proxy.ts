@@ -1,14 +1,7 @@
 import { clerkMiddleware, createRouteMatcher } from "@clerk/nextjs/server";
 import { NextResponse } from "next/server";
 import type { NextRequest } from "next/server";
-
-type UserRole = "admin" | "teacher" | "student" | "parent";
-
-interface CustomJwtSessionClaims {
-  metadata?: {
-    role?: UserRole;
-  };
-}
+import { UserMetadata, UserRole } from "./libs/types/prisma-schema";
 
 type RouteAccessMap = {
   [key: string]: UserRole[];
@@ -42,8 +35,6 @@ function hasAccess(pathname: string, userRole: UserRole): boolean {
     // "/admin(.*)" → /^\/admin(.*)$/
     const regex = new RegExp(`^${routePattern}$`);
 
-    console.log({ routePattern, allowedRoles, pathname, userRole, regex });
-
     // Jika pathname match dengan pattern
     if (regex.test(pathname)) {
       // Cek apakah role user ada dalam daftar allowed roles
@@ -72,7 +63,7 @@ export default clerkMiddleware(async (auth, req: NextRequest) => {
 
   // Jika user belum login, redirect ke halaman login ("/"):
   if (userId && pathname === "/") {
-    const userRole = (sessionClaims as CustomJwtSessionClaims).metadata?.role;
+    const userRole = (sessionClaims as UserMetadata).metadata?.role;
 
     return NextResponse.redirect(new URL(`/${userRole}`, req.url));
   }
@@ -83,7 +74,7 @@ export default clerkMiddleware(async (auth, req: NextRequest) => {
     await auth.protect();
 
     if (userId && sessionClaims) {
-      const userRole = (sessionClaims as CustomJwtSessionClaims).metadata?.role;
+      const userRole = (sessionClaims as UserMetadata).metadata?.role;
 
       if (!userRole) {
         return NextResponse.redirect(new URL("/", req.url));

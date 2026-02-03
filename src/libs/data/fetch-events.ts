@@ -1,5 +1,5 @@
 import { Prisma } from "@/generated/prisma/client";
-import { EventList } from "../types/prisma-schema";
+import { EventList, UserRole } from "../types/prisma-schema";
 import prisma from "../config/prisma";
 import { cacheLife, cacheTag } from "next/cache";
 import { calculatePagination, emptyPaginationResponse, handlePrismaError, validatePagination } from "../utils";
@@ -19,6 +19,10 @@ export interface GetEventsParams {
   // Sorting
   sortBy?: "title" | "class" | "date" | "startTime" | "endTime";
   sortOrder?: "asc" | "desc";
+
+  // Current User
+  currentUserId?: string | null;
+  currentUserRole?: UserRole | null;
 }
 
 export interface GetEventsResponse {
@@ -41,7 +45,7 @@ export const getEvents = async (params: GetEventsParams = {}): Promise<GetEvents
 
   try {
     // Default values for params:
-    const { page = 1, limit = 10, search = "", title, class: className, sortBy = "title", sortOrder = "asc" } = params;
+    const { page = 1, limit = 10, search = "", title, class: className, sortBy = "title", sortOrder = "asc", currentUserId, currentUserRole } = params;
 
     // Validate pagination:
     const { validPage, validLimit, skip } = validatePagination({ page, limit });
@@ -67,6 +71,35 @@ export const getEvents = async (params: GetEventsParams = {}): Promise<GetEvents
     // Filter by class:
     if (className) {
       andConditions.push({ class: { name: { contains: className, mode: "insensitive" } } });
+    }
+
+    // Filter events by current user:
+    if (currentUserId && currentUserRole) {
+      if (currentUserRole === "student") {
+        andConditions.push({ class: { students: { some: { id: currentUserId } } } });
+      } else if (currentUserRole === "teacher") {
+        andConditions.push({
+          class: {
+            lessons: {
+              some: { teacherId: currentUserId },
+            },
+          },
+        });
+      } else if (currentUserRole === "parent") {
+        andConditions.push({
+          class: {
+            students: {
+              some: { parentId: currentUserId },
+            },
+          },
+        });
+      } else {
+        andConditions.push({
+          class: {
+            id: "",
+          },
+        });
+      }
     }
 
     // Final WHERE clause:

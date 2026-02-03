@@ -1,4 +1,6 @@
 import { Prisma } from "@/generated/prisma/client";
+import { auth } from "@clerk/nextjs/server";
+import { UserMetadata, UserRole } from "../types/prisma-schema";
 
 export const formatDate = (dateString: Date) => {
   const months = ["Januari", "Februari", "Maret", "April", "Mei", "Juni", "Juli", "Agustus", "September", "Oktober", "November", "Desember"];
@@ -167,3 +169,22 @@ export const emptyPaginationResponse = <T>(
   },
   error: errorMessage,
 });
+
+type CurrentUserResponse = {
+  userId: string;
+  role: UserRole | null;
+};
+
+// Get Current User:
+export async function getCurrentUserRole(): Promise<CurrentUserResponse | null> {
+  const { userId, sessionClaims } = await auth();
+
+  if (!sessionClaims) return null;
+
+  const userRole = (sessionClaims as UserMetadata).metadata?.role;
+
+  return {
+    userId,
+    role: userRole ?? null,
+  };
+}

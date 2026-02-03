@@ -7,6 +7,8 @@ import TableSearch from "@/components/TableSearch";
 import TableSort from "@/components/TableSort";
 import { announcementFilterConfig } from "@/libs/config/filter-configs";
 import { announcementSortOptions } from "@/libs/config/sort-config";
+import { UserRole } from "@/libs/types/prisma-schema";
+import { getCurrentUserRole } from "@/libs/utils";
 import { Suspense } from "react";
 
 export interface AnnouncementListPageProps {
@@ -19,12 +21,14 @@ export interface AnnouncementListPageProps {
     sortBy?: "title" | "class" | "date";
     sortOrder?: "asc" | "desc";
   }>;
+  currentUserRole?: UserRole | null;
+  currentUserId?: string | null;
 }
 
-const AnnouncementListPage = ({ searchParams }: AnnouncementListPageProps) => {
-  const role = "admin";
-
-  console.log("announcementPage");
+const AnnouncementListPage = async ({ searchParams }: AnnouncementListPageProps) => {
+  const userRes = await getCurrentUserRole();
+  const userRole = userRes?.role;
+  const userId = userRes?.userId;
 
   return (
     <section className="bg-white p-4 rounded-lg space-y-5 shadow-sm">
@@ -46,14 +50,14 @@ const AnnouncementListPage = ({ searchParams }: AnnouncementListPageProps) => {
             <TableSort options={announcementSortOptions} />
 
             {/* Modal Button */}
-            {role === "admin" && <FormModal table="announcement" type="create" />}
+            {userRole === "admin" && <FormModal table="announcement" type="create" />}
           </div>
         </div>
       </div>
 
       {/* Announcement List */}
       <Suspense fallback={<TeacherListSkeleton />}>
-        <AnnouncementListContent searchParams={searchParams} />
+        <AnnouncementListContent searchParams={searchParams} currentUserRole={userRole} currentUserId={userId} />
       </Suspense>
     </section>
   );

@@ -1,5 +1,5 @@
 import { Prisma } from "@/generated/prisma/client";
-import { AssignmentList } from "../types/prisma-schema";
+import { AssignmentList, UserRole } from "../types/prisma-schema";
 import prisma from "../config/prisma";
 import { cacheLife, cacheTag } from "next/cache";
 import { calculatePagination, emptyPaginationResponse, handlePrismaError, validatePagination } from "../utils";
@@ -23,6 +23,9 @@ export interface GetAssignmentsParams {
   // Sorting
   sortBy?: "title" | "lesson" | "subject" | "class" | "teacher" | "startTime";
   sortOrder?: "asc" | "desc";
+
+  currentUserId?: string | null;
+  currentUserRole?: UserRole | null;
 }
 
 export interface GetAssignmentsResponse {
@@ -45,7 +48,9 @@ export const getAssignments = async (params: GetAssignmentsParams = {}): Promise
 
   try {
     // Default values for params:
-    const { page = 1, limit = 10, search = "", lesson, subject, class: className, classId, teacher, result, sortBy = "subject", sortOrder = "asc" } = params;
+    const { page = 1, limit = 10, search = "", lesson, subject, class: className, classId, teacher, result, sortBy = "subject", sortOrder = "asc", currentUserId, currentUserRole } = params;
+
+    console.log({ currentUserId, currentUserRole });
 
     // Validate pagination:
     const { validPage, validLimit, skip } = validatePagination({ page, limit });
@@ -125,11 +130,52 @@ export const getAssignments = async (params: GetAssignmentsParams = {}): Promise
     }
 
     // Filter teacher
-    if (teacher) {
+    if (teacher && currentUserRole === "admin") {
       andConditions.push({
         lesson: {
           teacher: {
             id: { contains: teacher, mode: "insensitive" },
+          },
+        },
+      });
+    }
+
+    // Filter assignment by current user:
+    if (currentUserRole === "teacher" && currentUserId) {
+      andConditions.push({
+        lesson: {
+          teacher: {
+            id: currentUserId,
+          },
+        },
+      });
+    }
+
+    // Filter assignment by current user:
+    if (currentUserRole === "student" && currentUserId) {
+      andConditions.push({
+        lesson: {
+          class: {
+            students: {
+              some: {
+                id: currentUserId,
+              },
+            },
+          },
+        },
+      });
+    }
+
+    // Filter assignment by current user:
+    if (currentUserRole === "parent" && currentUserId) {
+      andConditions.push({
+        lesson: {
+          class: {
+            students: {
+              some: {
+                parentId: currentUserId,
+              },
+            },
           },
         },
       });
@@ -187,6 +233,8 @@ export const getAssignments = async (params: GetAssignmentsParams = {}): Promise
       }),
       prisma.assignment.count({ where }),
     ]);
+
+    console.log({ assignments });
 
     //  Calculate pagination:
     const pagination = calculatePagination(total, validPage, validLimit);

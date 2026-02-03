@@ -7,6 +7,8 @@ import TableSearch from "@/components/TableSearch";
 import TableSort from "@/components/TableSort";
 import { studentFilterConfig } from "@/libs/config/filter-configs";
 import { studentSortOptions } from "@/libs/config/sort-config";
+import { UserRole } from "@/libs/types/prisma-schema";
+import { getCurrentUserRole } from "@/libs/utils";
 import { Suspense } from "react";
 
 export interface StudentListPageProps {
@@ -22,10 +24,14 @@ export interface StudentListPageProps {
     sortBy?: "name" | "grade" | "createdAt";
     sortOrder?: "asc" | "desc";
   }>;
+  currentUserId?: string | null;
+  currentUserRole?: UserRole | null;
 }
 
-const StudentListPage = ({ searchParams }: StudentListPageProps) => {
-  const role = "admin";
+const StudentListPage = async ({ searchParams }: StudentListPageProps) => {
+  const userRes = await getCurrentUserRole();
+  const role = userRes?.role;
+  const userId = userRes?.userId;
 
   return (
     <section className="bg-white  shadow-sm p-4 rounded-lg space-y-5">
@@ -53,7 +59,7 @@ const StudentListPage = ({ searchParams }: StudentListPageProps) => {
       </div>
 
       <Suspense fallback={<TeacherListSkeleton />}>
-        <StudentListContent searchParams={searchParams} />
+        <StudentListContent searchParams={searchParams} currentUserId={userId} currentUserRole={role} />
       </Suspense>
     </section>
   );

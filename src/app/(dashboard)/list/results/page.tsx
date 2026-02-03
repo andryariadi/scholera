@@ -7,6 +7,8 @@ import TableSearch from "@/components/TableSearch";
 import TableSort from "@/components/TableSort";
 import { resultFilterConfig } from "@/libs/config/filter-configs";
 import { resultSortOptions } from "@/libs/config/sort-config";
+import { UserRole } from "@/libs/types/prisma-schema";
+import { getCurrentUserRole } from "@/libs/utils";
 import { Suspense } from "react";
 
 export interface ResultListPageProps {
@@ -21,10 +23,14 @@ export interface ResultListPageProps {
     sortBy?: "score" | "student" | "subject" | "class" | "teacher";
     sortOrder?: "asc" | "desc";
   }>;
+  currentUserId?: string | null;
+  currentUserRole?: UserRole | null;
 }
 
-const ResultListPage = ({ searchParams }: ResultListPageProps) => {
-  const role = "admin";
+const ResultListPage = async ({ searchParams }: ResultListPageProps) => {
+  const userRes = await getCurrentUserRole();
+  const role = userRes?.role;
+  const userId = userRes?.userId;
 
   return (
     <section className="bg-white p-4 rounded-lg space-y-5 shadow-sm">
@@ -46,14 +52,14 @@ const ResultListPage = ({ searchParams }: ResultListPageProps) => {
             <TableSort options={resultSortOptions} />
 
             {/* Modal Button */}
-            {role === "admin" && <FormModal table="result" type="create" />}
+            {(role === "admin" || role === "teacher") && <FormModal table="result" type="create" />}
           </div>
         </div>
       </div>
 
       {/* Result List */}
       <Suspense fallback={<TeacherListSkeleton />}>
-        <ResultListContent searchParams={searchParams} />
+        <ResultListContent searchParams={searchParams} currentUserId={userId} currentUserRole={role} />
       </Suspense>
     </section>
   );
