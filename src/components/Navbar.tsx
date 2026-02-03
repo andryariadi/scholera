@@ -1,8 +1,10 @@
 import { UserButton } from "@clerk/nextjs";
+import { currentUser } from "@clerk/nextjs/server";
 import { Search, MessageSquare, Bell } from "lucide-react";
-import Image from "next/image";
 
-const Navbar = () => {
+const Navbar = async () => {
+  const user = await currentUser();
+
   return (
     <nav className="sticky top-0 z-40 py-2 px-5">
       <div className="bg-white shadow-xs flex items-center justify-between z-50 bg-clip-padding backdrop-filter backdrop-blur-xl h-14 px-3 rounded-full">
@@ -28,8 +30,8 @@ const Navbar = () => {
 
           {/* User Info */}
           <div className="flex flex-col text-right">
-            <span className="text-xs leading-3 font-medium">John Doe</span>
-            <span className="text-[10px] text-gray-500">Admin</span>
+            <span className="text-xs leading-3 font-medium">{`${user?.firstName} ${user?.lastName}`}</span>
+            <span className="text-[10px] text-gray-500">{user?.publicMetadata.role as string}</span>
           </div>
 
           {/* Avatar */}

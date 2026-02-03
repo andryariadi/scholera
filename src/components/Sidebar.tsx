@@ -1,12 +1,22 @@
 "use client";
 
 import { menuItems } from "@/libs/constants";
+import { useUser } from "@clerk/nextjs";
 import Image from "next/image";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
+import SidebarSkeleton from "./skeletons/SidebarSkeleton";
 
 const Sidebar = () => {
   const pathName = usePathname();
+
+  const { user, isLoaded } = useUser();
+
+  const role = user?.publicMetadata.role as string;
+
+  if (!isLoaded) {
+    return <SidebarSkeleton />;
+  }
 
   // Function to check active path:
   const isActivePath = (itemHref: string) => {
@@ -40,7 +50,7 @@ const Sidebar = () => {
               {i.items.map((item) => {
                 const isActive = isActivePath(item.href);
 
-                if (item.visible.includes("admin")) {
+                if (item.visible.includes(role)) {
                   return (
                     <Link
                       href={item.href}

@@ -5,7 +5,7 @@ import { getSubjects } from "@/libs/data/fetch-subjects";
 import { SubjectList } from "@/libs/types/prisma-schema";
 import Pagination from "./Pagination";
 
-const SubjectListContent = async ({ searchParams }: SubjectListPageProps) => {
+const SubjectListContent = async ({ searchParams, currentUserId, currentUserRole }: SubjectListPageProps) => {
   const params = await searchParams;
 
   const queryParams = {
@@ -17,6 +17,8 @@ const SubjectListContent = async ({ searchParams }: SubjectListPageProps) => {
     lesson: params.lesson,
     sortBy: params.sortBy || "name",
     sortOrder: params.sortOrder || "asc",
+    currentUserId,
+    currentUserRole,
   };
 
   const subjectsRes = await getSubjects(queryParams);
@@ -36,13 +38,8 @@ const SubjectListContent = async ({ searchParams }: SubjectListPageProps) => {
       accessor: "lessons",
       className: "hidden md:table-cell",
     },
-    {
-      header: "Actions",
-      accessor: "action",
-    },
+    ...(currentUserRole === "admin" ? [{ header: "Actions", accessor: "action" }] : []),
   ];
-
-  const role = "admin";
 
   const renderRow = (item: SubjectList) => (
     <tr key={item.id} className="border-b border-gray-200 even:bg-slate-50 text-sm hover:bg-scholera-purple-light">
@@ -55,7 +52,7 @@ const SubjectListContent = async ({ searchParams }: SubjectListPageProps) => {
       {/* Actions */}
       <td>
         <div className="flex items-center gap-2">
-          {role === "admin" && (
+          {currentUserRole === "admin" && (
             <>
               <FormModal table="subject" type="update" data={item} />
               <FormModal table="subject" type="delete" id={item.id} />

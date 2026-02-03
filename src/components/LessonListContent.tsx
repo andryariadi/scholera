@@ -5,7 +5,7 @@ import Table from "./Table";
 import Pagination from "./Pagination";
 import { getLessons } from "@/libs/data/fetch.lessons";
 
-const LessonListContent = async ({ searchParams }: LessonListPageProps) => {
+const LessonListContent = async ({ searchParams, currentUserId, currentUserRole }: LessonListPageProps) => {
   const params = await searchParams;
 
   const queryParams = {
@@ -19,11 +19,11 @@ const LessonListContent = async ({ searchParams }: LessonListPageProps) => {
     classId: params.classId,
     sortBy: params.sortBy || "name",
     sortOrder: params.sortOrder || "asc",
+    currentUserId,
+    currentUserRole,
   };
 
   const lessonsRes = await getLessons(queryParams);
-
-  const role = "admin";
 
   const columns = [
     {
@@ -44,13 +44,8 @@ const LessonListContent = async ({ searchParams }: LessonListPageProps) => {
       accessor: "day",
       className: "hidden md:table-cell",
     },
-    {
-      header: "Actions",
-      accessor: "action",
-    },
+    ...(currentUserRole === "admin" ? [{ header: "Actions", accessor: "action" }] : []),
   ];
-
-  console.log({ lessonsRes });
 
   const renderRow = (item: LessonList) => (
     <tr key={item.id} className="border-b border-gray-200 even:bg-slate-50 text-sm hover:bg-scholera-purple-light">
@@ -65,7 +60,7 @@ const LessonListContent = async ({ searchParams }: LessonListPageProps) => {
       {/* Actions */}
       <td>
         <div className="flex items-center gap-2">
-          {role === "admin" && (
+          {currentUserRole === "admin" && (
             <>
               <FormModal table="lesson" type="update" data={item} />
               <FormModal table="lesson" type="delete" id={item.id} />

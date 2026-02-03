@@ -6,7 +6,7 @@ import { getAnnouncements } from "@/libs/data/fetch-announcements";
 import { formatDateISO } from "@/libs/utils";
 import Table from "./Table";
 
-const AnnouncementListContent = async ({ searchParams }: AnnouncementListPageProps) => {
+const AnnouncementListContent = async ({ searchParams, currentUserRole, currentUserId }: AnnouncementListPageProps) => {
   const params = await searchParams;
 
   const queryParams = {
@@ -17,13 +17,11 @@ const AnnouncementListContent = async ({ searchParams }: AnnouncementListPagePro
     class: params.class,
     sortBy: params.sortBy || "title",
     sortOrder: params.sortOrder || "asc",
+    currentUserRole,
+    currentUserId,
   };
 
   const announcementRes = await getAnnouncements(queryParams);
-
-  console.log({ announcementRes });
-
-  const role = "admin";
 
   const columns = [
     {
@@ -39,10 +37,7 @@ const AnnouncementListContent = async ({ searchParams }: AnnouncementListPagePro
       accessor: "date",
       className: "hidden md:table-cell",
     },
-    {
-      header: "Actions",
-      accessor: "action",
-    },
+    ...(currentUserRole === "admin" ? [{ header: "Actions", accessor: "action" }] : []),
   ];
 
   const renderRow = (item: AnnouncementList) => (
@@ -50,13 +45,13 @@ const AnnouncementListContent = async ({ searchParams }: AnnouncementListPagePro
       {/* Title */}
       <td className="flex items-center gap-4 p-4">{item.title}</td>
       {/* Class */}
-      <td>{item.class.name}</td>
+      <td>{item.class.name || "-"}</td>
       {/* Date */}
       <td className="hidden md:table-cell">{formatDateISO(item.date)}</td>
       {/* Actions */}
       <td>
         <div className="flex items-center gap-2">
-          {role === "admin" && (
+          {currentUserRole === "admin" && (
             <>
               <FormModal table="announcement" type="update" data={item} />
               <FormModal table="announcement" type="delete" id={item.id} />

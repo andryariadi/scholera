@@ -7,6 +7,8 @@ import TableSearch from "@/components/TableSearch";
 import TableSort from "@/components/TableSort";
 import { parentFilterConfig } from "@/libs/config/filter-configs";
 import { parentSortOptions } from "@/libs/config/sort-config";
+import { UserRole } from "@/libs/types/prisma-schema";
+import { getCurrentUserRole } from "@/libs/utils";
 import { Suspense } from "react";
 
 export interface ParentListPageProps {
@@ -20,10 +22,14 @@ export interface ParentListPageProps {
     sortBy?: "name" | "username" | "phone" | "address" | "email" | "createdAt";
     sortOrder?: "asc" | "desc";
   }>;
+  currentUserId?: string | null;
+  currentUserRole?: UserRole | null;
 }
 
-const ParentList = ({ searchParams }: ParentListPageProps) => {
-  const role = "admin";
+const ParentList = async ({ searchParams }: ParentListPageProps) => {
+  const userRes = await getCurrentUserRole();
+  const role = userRes?.role;
+  const userId = userRes?.userId;
 
   return (
     <section className="bg-white shadow-xs p-4 rounded-lg space-y-5">
@@ -53,7 +59,7 @@ const ParentList = ({ searchParams }: ParentListPageProps) => {
 
       {/* Parent List */}
       <Suspense fallback={<TeacherListSkeleton />}>
-        <ParentListContent searchParams={searchParams} />
+        <ParentListContent searchParams={searchParams} currentUserId={userId} currentUserRole={role} />
       </Suspense>
     </section>
   );

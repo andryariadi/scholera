@@ -6,7 +6,7 @@ import { AssignmentListPageProps } from "@/app/(dashboard)/list/assignments/page
 import { getAssignments } from "@/libs/data/fetch.assignment";
 import { formatDateISO } from "@/libs/utils";
 
-const AssignmentListContent = async ({ searchParams }: AssignmentListPageProps) => {
+const AssignmentListContent = async ({ searchParams, currentUserId, currentUserRole }: AssignmentListPageProps) => {
   const params = await searchParams;
 
   const queryParams = {
@@ -21,11 +21,11 @@ const AssignmentListContent = async ({ searchParams }: AssignmentListPageProps) 
     result: params.result,
     sortBy: params.sortBy || "subject",
     sortOrder: params.sortOrder || "asc",
+    currentUserId,
+    currentUserRole,
   };
 
   const assignmentsRes = await getAssignments(queryParams);
-
-  const role = "admin";
 
   const columns = [
     {
@@ -46,10 +46,7 @@ const AssignmentListContent = async ({ searchParams }: AssignmentListPageProps) 
       accessor: "dueDate",
       className: "hidden md:table-cell",
     },
-    {
-      header: "Actions",
-      accessor: "action",
-    },
+    ...(currentUserRole === "admin" || currentUserRole === "teacher" ? [{ header: "Actions", accessor: "action" }] : []),
   ];
 
   const renderRow = (item: AssignmentList) => (
@@ -65,7 +62,7 @@ const AssignmentListContent = async ({ searchParams }: AssignmentListPageProps) 
       {/* Actions */}
       <td>
         <div className="flex items-center gap-2">
-          {role === "admin" && (
+          {(currentUserRole === "admin" || currentUserRole === "teacher") && (
             <>
               <FormModal table="assignment" type="update" data={item} />
               <FormModal table="assignment" type="delete" id={item.id} />

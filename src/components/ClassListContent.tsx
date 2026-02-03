@@ -5,7 +5,7 @@ import Table from "./Table";
 import Pagination from "./Pagination";
 import { getClasses } from "@/libs/data/fetch-classes";
 
-const ClassListContent = async ({ searchParams }: ClassListPageProps) => {
+const ClassListContent = async ({ searchParams, currentUserRole }: ClassListPageProps) => {
   const params = await searchParams;
 
   const queryParams = {
@@ -19,8 +19,6 @@ const ClassListContent = async ({ searchParams }: ClassListPageProps) => {
     sortOrder: params.sortOrder || "asc",
   };
   const classesRes = await getClasses(queryParams);
-
-  const role = "admin";
 
   const columns = [
     {
@@ -42,10 +40,7 @@ const ClassListContent = async ({ searchParams }: ClassListPageProps) => {
       accessor: "supervisor",
       className: "hidden md:table-cell",
     },
-    {
-      header: "Actions",
-      accessor: "action",
-    },
+    ...(currentUserRole === "admin" ? [{ header: "Actions", accessor: "action" }] : []),
   ];
 
   const renderRow = (item: ClassList) => (
@@ -61,7 +56,7 @@ const ClassListContent = async ({ searchParams }: ClassListPageProps) => {
       {/* Actions */}
       <td>
         <div className="flex items-center gap-2">
-          {role === "admin" && (
+          {currentUserRole === "admin" && (
             <>
               <FormModal table="class" type="update" data={item} />
               <FormModal table="class" type="delete" id={item.id} />

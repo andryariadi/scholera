@@ -6,7 +6,7 @@ import { getResults } from "@/libs/data/fetch.results";
 import { ResultList } from "@/libs/types/prisma-schema";
 import { formatDateISO } from "@/libs/utils";
 
-const ResultListContent = async ({ searchParams }: ResultListPageProps) => {
+const ResultListContent = async ({ searchParams, currentUserId, currentUserRole }: ResultListPageProps) => {
   const params = await searchParams;
 
   const queryParams = {
@@ -19,11 +19,11 @@ const ResultListContent = async ({ searchParams }: ResultListPageProps) => {
     teacher: params.teacher,
     sortBy: params.sortBy || "subject",
     sortOrder: params.sortOrder || "asc",
+    currentUserId,
+    currentUserRole,
   };
 
   const resultsRes = await getResults(queryParams);
-
-  const role = "admin";
 
   const columns = [
     {
@@ -54,10 +54,7 @@ const ResultListContent = async ({ searchParams }: ResultListPageProps) => {
       accessor: "date",
       className: "hidden md:table-cell",
     },
-    {
-      header: "Actions",
-      accessor: "action",
-    },
+    ...(currentUserRole === "admin" || currentUserRole === "teacher" ? [{ header: "Actions", accessor: "actions" }] : []),
   ];
 
   const renderRow = (item: ResultList) => (
@@ -77,7 +74,7 @@ const ResultListContent = async ({ searchParams }: ResultListPageProps) => {
       {/* Actions */}
       <td>
         <div className="flex items-center gap-2">
-          {role === "admin" && (
+          {(currentUserRole === "admin" || currentUserRole === "teacher") && (
             <>
               <FormModal table="result" type="update" data={item} />
               <FormModal table="result" type="delete" id={item.id} />

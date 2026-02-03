@@ -6,7 +6,7 @@ import { ExamListPageProps } from "@/app/(dashboard)/list/exams/page";
 import { getExams } from "@/libs/data/fetch-exams";
 import { formatDateISO } from "@/libs/utils";
 
-const ExamListContent = async ({ searchParams }: ExamListPageProps) => {
+const ExamListContent = async ({ searchParams, currentUserRole, currentUserId }: ExamListPageProps) => {
   const params = await searchParams;
 
   const queryParams = {
@@ -21,11 +21,11 @@ const ExamListContent = async ({ searchParams }: ExamListPageProps) => {
     result: params.result,
     sortBy: params.sortBy || "subject",
     sortOrder: params.sortOrder || "asc",
+    currentUserRole,
+    currentUserId,
   };
 
   const examsRes = await getExams(queryParams);
-
-  const role = "admin";
 
   const columns = [
     {
@@ -46,10 +46,7 @@ const ExamListContent = async ({ searchParams }: ExamListPageProps) => {
       accessor: "date",
       className: "hidden md:table-cell",
     },
-    {
-      header: "Actions",
-      accessor: "action",
-    },
+    ...(currentUserRole === "admin" || currentUserRole === "teacher" ? [{ header: "Actions", accessor: "action" }] : []),
   ];
 
   const renderRow = (item: ExamList) => (
@@ -65,7 +62,7 @@ const ExamListContent = async ({ searchParams }: ExamListPageProps) => {
       {/* Actions */}
       <td>
         <div className="flex items-center gap-2">
-          {role === "admin" && (
+          {(currentUserRole === "admin" || currentUserRole === "teacher") && (
             <>
               <FormModal table="exam" type="update" data={item} />
               <FormModal table="exam" type="delete" id={item.id} />

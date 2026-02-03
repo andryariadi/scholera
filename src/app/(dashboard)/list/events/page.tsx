@@ -7,6 +7,8 @@ import TableSearch from "@/components/TableSearch";
 import TableSort from "@/components/TableSort";
 import { eventFilterConfig } from "@/libs/config/filter-configs";
 import { eventSortOptions } from "@/libs/config/sort-config";
+import { UserRole } from "@/libs/types/prisma-schema";
+import { getCurrentUserRole } from "@/libs/utils";
 import { Suspense } from "react";
 
 export interface EventListPageProps {
@@ -19,10 +21,14 @@ export interface EventListPageProps {
     sortBy?: "title" | "class" | "date" | "startTime" | "endTime";
     sortOrder?: "asc" | "desc";
   }>;
+  currentUserId?: string | null;
+  currentUserRole?: UserRole | null;
 }
 
-const EventListPage = ({ searchParams }: EventListPageProps) => {
-  const role = "admin";
+const EventListPage = async ({ searchParams }: EventListPageProps) => {
+  const userRes = await getCurrentUserRole();
+  const role = userRes?.role;
+  const userId = userRes?.userId;
 
   return (
     <section className="bg-white p-4 rounded-lg space-y-5 shadow-sm">
@@ -51,7 +57,7 @@ const EventListPage = ({ searchParams }: EventListPageProps) => {
 
       {/* Event List */}
       <Suspense fallback={<TeacherListSkeleton />}>
-        <EventListContent searchParams={searchParams} />
+        <EventListContent searchParams={searchParams} currentUserRole={role} currentUserId={userId} />
       </Suspense>
     </section>
   );

@@ -1,5 +1,5 @@
 import { Prisma } from "@/generated/prisma/client";
-import { ExamList } from "../types/prisma-schema";
+import { ExamList, UserRole } from "../types/prisma-schema";
 import prisma from "../config/prisma";
 import { cacheLife, cacheTag } from "next/cache";
 import { calculatePagination, emptyPaginationResponse, handlePrismaError, validatePagination } from "../utils";
@@ -23,6 +23,9 @@ export interface GetExamsParams {
   // Sorting
   sortBy?: "title" | "lesson" | "subject" | "class" | "teacher" | "startTime";
   sortOrder?: "asc" | "desc";
+
+  currentUserId?: string | null;
+  currentUserRole?: UserRole | null;
 }
 
 export interface GetExamsResponse {
@@ -45,7 +48,7 @@ export const getExams = async (params: GetExamsParams = {}): Promise<GetExamsRes
 
   try {
     // Default values for params:
-    const { page = 1, limit = 10, search = "", lesson, subject, class: className, classId, teacher, result, sortBy = "subject", sortOrder = "asc" } = params;
+    const { page = 1, limit = 10, search = "", lesson, subject, class: className, classId, teacher, result, sortBy = "subject", sortOrder = "asc", currentUserId, currentUserRole } = params;
 
     // Validate pagination:
     const { validPage, validLimit, skip } = validatePagination({ page, limit });
@@ -140,6 +143,35 @@ export const getExams = async (params: GetExamsParams = {}): Promise<GetExamsRes
       andConditions.push({
         results: { some: { score: Number(result) || undefined } },
       });
+    }
+
+    // Filter exams by current user:
+    if (currentUserId && currentUserRole) {
+      if (currentUserRole === "student") {
+        andConditions.push({
+          lesson: {
+            class: {
+              students: {
+                some: { id: currentUserId },
+              },
+            },
+          },
+        });
+      } else if (currentUserRole === "teacher") {
+        andConditions.push({
+          lesson: { teacherId: currentUserId },
+        });
+      } else if (currentUserRole === "parent") {
+        andConditions.push({
+          lesson: {
+            class: {
+              students: {
+                some: { parentId: currentUserId },
+              },
+            },
+          },
+        });
+      }
     }
 
     // Build final WHERE clause:

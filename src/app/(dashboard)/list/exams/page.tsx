@@ -7,6 +7,8 @@ import TableSearch from "@/components/TableSearch";
 import TableSort from "@/components/TableSort";
 import { examFilterConfig } from "@/libs/config/filter-configs";
 import { examSortOptions } from "@/libs/config/sort-config";
+import { UserRole } from "@/libs/types/prisma-schema";
+import { getCurrentUserRole } from "@/libs/utils";
 import { Suspense } from "react";
 
 export interface ExamListPageProps {
@@ -23,10 +25,14 @@ export interface ExamListPageProps {
     sortBy?: "title" | "lesson" | "subject" | "class" | "teacher" | "startTime";
     sortOrder?: "asc" | "desc";
   }>;
+  currentUserId?: string | null;
+  currentUserRole?: UserRole | null;
 }
 
-const ExamListPage = ({ searchParams }: ExamListPageProps) => {
-  const role = "admin";
+const ExamListPage = async ({ searchParams }: ExamListPageProps) => {
+  const userRes = await getCurrentUserRole();
+  const role = userRes?.role;
+  const userId = userRes?.userId;
 
   return (
     <section className="bg-white p-4 rounded-lg space-y-5 shadow-sm">
@@ -48,14 +54,14 @@ const ExamListPage = ({ searchParams }: ExamListPageProps) => {
             <TableSort options={examSortOptions} />
 
             {/* Modal Button */}
-            {role === "admin" && <FormModal table="exam" type="create" />}
+            {(role === "admin" || role === "teacher") && <FormModal table="exam" type="create" />}
           </div>
         </div>
       </div>
 
       {/* Exam List */}
       <Suspense fallback={<TeacherListSkeleton />}>
-        <ExamListContent searchParams={searchParams} />
+        <ExamListContent searchParams={searchParams} currentUserRole={role} currentUserId={userId} />
       </Suspense>
     </section>
   );

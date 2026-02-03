@@ -6,7 +6,7 @@ import { getEvents } from "@/libs/data/fetch-events";
 import { EventList } from "@/libs/types/prisma-schema";
 import { formatDateISO, formatTime } from "@/libs/utils";
 
-const EventListContent = async ({ searchParams }: EventListPageProps) => {
+const EventListContent = async ({ searchParams, currentUserRole, currentUserId }: EventListPageProps) => {
   const params = await searchParams;
 
   const queryParams = {
@@ -17,11 +17,11 @@ const EventListContent = async ({ searchParams }: EventListPageProps) => {
     class: params.class,
     sortBy: params.sortBy || "title",
     sortOrder: params.sortOrder || "asc",
+    currentUserRole,
+    currentUserId,
   };
 
   const eventRes = await getEvents(queryParams);
-
-  const role = "admin";
 
   const columns = [
     {
@@ -47,10 +47,7 @@ const EventListContent = async ({ searchParams }: EventListPageProps) => {
       accessor: "endTime",
       className: "hidden md:table-cell",
     },
-    {
-      header: "Actions",
-      accessor: "action",
-    },
+    ...(currentUserRole === "admin" ? [{ header: "Actions", accessor: "actions" }] : []),
   ];
 
   const renderRow = (item: EventList) => (
@@ -58,7 +55,7 @@ const EventListContent = async ({ searchParams }: EventListPageProps) => {
       {/* Title */}
       <td className="flex items-center gap-4 p-4">{item.title}</td>
       {/* Class */}
-      <td>{item.class.name}</td>
+      <td>{item.class.name || "-"}</td>
       {/* Date */}
       <td className="hidden md:table-cell">{formatDateISO(item.startTime)}</td>
       {/* Start Time */}
@@ -68,7 +65,7 @@ const EventListContent = async ({ searchParams }: EventListPageProps) => {
       {/* Actions */}
       <td>
         <div className="flex items-center gap-2">
-          {role === "admin" && (
+          {currentUserRole === "admin" && (
             <>
               <FormModal table="event" type="update" data={item} />
               <FormModal table="event" type="delete" id={item.id} />

@@ -20,7 +20,7 @@ const forms: {
   student: (type, data) => <StudentForm type={type} data={data} />,
 };
 
-const Form = <T,>({ table, type, data, id }: { type: "create" | "update" | "delete"; table: string; data: T; id?: string }) => {
+const Form = <T,>({ table, type, data, id }: { type: "create" | "update" | "delete"; table: string; data: T; id?: string | number }) => {
   return type === "delete" && id ? (
     // Form to delete:
     <form className="p-4 flex flex-col gap-4">

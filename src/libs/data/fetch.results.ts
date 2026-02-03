@@ -1,5 +1,5 @@
 import { Prisma } from "@/generated/prisma/client";
-import { ResultList } from "../types/prisma-schema";
+import { ResultList, UserRole } from "../types/prisma-schema";
 import prisma from "../config/prisma";
 import { cacheLife, cacheTag } from "next/cache";
 import { calculatePagination, emptyPaginationResponse, handlePrismaError, validatePagination } from "../utils";
@@ -21,6 +21,10 @@ export interface GetResultsParams {
   // Sorting
   sortBy?: "score" | "student" | "subject" | "class" | "teacher";
   sortOrder?: "asc" | "desc";
+
+  // Current User
+  currentUserId?: string | null;
+  currentUserRole?: UserRole | null;
 }
 
 export interface GetResultsResponse {
@@ -43,7 +47,7 @@ export const getResults = async (params: GetResultsParams = {}): Promise<GetResu
 
   try {
     // Default values for params:
-    const { page = 1, limit = 10, search = "", subject, class: className, teacher, student, sortBy = "student", sortOrder = "asc" } = params;
+    const { page = 1, limit = 10, search = "", subject, class: className, teacher, student, sortBy = "student", sortOrder = "asc", currentUserId, currentUserRole } = params;
 
     // Validate pagination:
     const { validPage, validLimit, skip } = validatePagination({ page, limit });
@@ -113,6 +117,36 @@ export const getResults = async (params: GetResultsParams = {}): Promise<GetResu
           },
         },
       });
+    }
+
+    // Filter results by current user:
+    if (currentUserId && currentUserRole) {
+      if (currentUserRole === "student") {
+        andConditions.push({
+          studentId: currentUserId,
+        });
+      } else if (currentUserRole === "teacher") {
+        andConditions.push({
+          OR: [
+            {
+              exam: {
+                lesson: { teacherId: currentUserId },
+              },
+            },
+            {
+              assignment: {
+                lesson: { teacherId: currentUserId },
+              },
+            },
+          ],
+        });
+      } else if (currentUserRole === "parent") {
+        andConditions.push({
+          student: {
+            parentId: currentUserId,
+          },
+        });
+      }
     }
 
     // Build final WHERE clause:

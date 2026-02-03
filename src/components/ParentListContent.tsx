@@ -5,7 +5,7 @@ import FormModal from "./FormModal";
 import { ParentList } from "@/libs/types/prisma-schema";
 import Pagination from "./Pagination";
 
-const ParentListContent = async ({ searchParams }: ParentListPageProps) => {
+const ParentListContent = async ({ searchParams, currentUserId, currentUserRole }: ParentListPageProps) => {
   const params = await searchParams;
 
   const queryParams = {
@@ -17,6 +17,8 @@ const ParentListContent = async ({ searchParams }: ParentListPageProps) => {
     student: params.student,
     sortBy: params.sortBy || "createdAt",
     sortOrder: params.sortOrder || "desc",
+    currentUserId,
+    currentUserRole,
   };
 
   const parentsRes = await getParents(queryParams);
@@ -46,13 +48,8 @@ const ParentListContent = async ({ searchParams }: ParentListPageProps) => {
       accessor: "address",
       className: "hidden lg:table-cell",
     },
-    {
-      header: "Actions",
-      accessor: "action",
-    },
+    ...(currentUserRole === "admin" ? [{ header: "Actions", accessor: "action" }] : []),
   ];
-
-  const role = "admin";
 
   const renderRow = (item: ParentList) => (
     <tr key={item.id} className="border-b border-gray-200 even:bg-slate-50 text-sm hover:bg-scholera-purple-light">
@@ -73,7 +70,7 @@ const ParentListContent = async ({ searchParams }: ParentListPageProps) => {
       <td className="hidden md:table-cell">{item.address}</td>
       <td>
         <div className="flex items-center gap-2">
-          {role === "admin" && (
+          {currentUserRole === "admin" && (
             <>
               <FormModal table="parent" type="update" data={item} />
               <FormModal table="parent" type="delete" id={item.id} />

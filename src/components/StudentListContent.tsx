@@ -8,7 +8,7 @@ import { StudentListPageProps } from "@/app/(dashboard)/list/students/page";
 import { getStudents } from "@/libs/data/fetch-students";
 import { StudentList } from "@/libs/types/prisma-schema";
 
-const StudentListContent = async ({ searchParams }: StudentListPageProps) => {
+const StudentListContent = async ({ searchParams, currentUserId, currentUserRole }: StudentListPageProps) => {
   const params = await searchParams;
 
   const queryParams = {
@@ -22,11 +22,11 @@ const StudentListContent = async ({ searchParams }: StudentListPageProps) => {
     teacher: params.teacher,
     sortBy: params.sortBy || "createdAt",
     sortOrder: params.sortOrder || "desc",
+    currentUserId,
+    currentUserRole,
   };
 
   const students = await getStudents(queryParams);
-
-  const role = "admin";
 
   const columns = [
     {
@@ -58,10 +58,7 @@ const StudentListContent = async ({ searchParams }: StudentListPageProps) => {
       accessor: "address",
       className: "hidden lg:table-cell",
     },
-    {
-      header: "Actions",
-      accessor: "action",
-    },
+    ...(currentUserRole === "admin" ? [{ header: "Actions", accessor: "action" }] : []),
   ];
 
   const renderRow = (item: StudentList) => (
@@ -100,7 +97,7 @@ const StudentListContent = async ({ searchParams }: StudentListPageProps) => {
           </Link>
 
           {/* Delete */}
-          {role === "admin" && <FormModal table="student" type="delete" id={item.id} />}
+          {currentUserRole === "admin" && <FormModal table="student" type="delete" id={item.id} />}
         </div>
       </td>
     </tr>

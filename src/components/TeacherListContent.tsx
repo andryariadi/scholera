@@ -8,7 +8,7 @@ import { View } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
 
-export async function TeacherListContent({ searchParams }: TeacherListPageProps) {
+export async function TeacherListContent({ searchParams, currentUserId, currentUserRole }: TeacherListPageProps) {
   const params = await searchParams;
 
   const queryParams = {
@@ -22,11 +22,11 @@ export async function TeacherListContent({ searchParams }: TeacherListPageProps)
     classId: params.classId,
     sortBy: params.sortBy || "createdAt",
     sortOrder: params.sortOrder || "desc",
+    currentUserId,
+    currentUserRole,
   };
 
   const teachersRes = await getTeachers(queryParams);
-
-  const role = "admin";
 
   const columns = [
     { header: "Info", accessor: "info" },
@@ -36,7 +36,7 @@ export async function TeacherListContent({ searchParams }: TeacherListPageProps)
     { header: "Classes", accessor: "classes", className: "hidden md:table-cell" },
     { header: "Phone", accessor: "phone", className: "hidden lg:table-cell" },
     { header: "Address", accessor: "address", className: "hidden lg:table-cell" },
-    ...(role === "admin" ? [{ header: "Actions", accessor: "action" }] : []),
+    ...(currentUserRole === "admin" ? [{ header: "Actions", accessor: "action" }] : []),
   ];
 
   const renderRow = (item: TeacherList) => (
@@ -70,7 +70,7 @@ export async function TeacherListContent({ searchParams }: TeacherListPageProps)
             </button>
           </Link>
 
-          {role === "admin" && <FormModal table="teacher" type="delete" id={item.id} />}
+          {currentUserRole === "admin" && <FormModal table="teacher" type="delete" id={item.id} />}
         </div>
       </td>
     </tr>
