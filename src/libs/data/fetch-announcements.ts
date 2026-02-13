@@ -74,7 +74,7 @@ export const getAnnouncements = async (params: GetAnnouncementsParams = {}): Pro
     }
 
     // Filter announcements by current user:
-    if (currentUserId && currentUserRole) {
+    if (currentUserId && currentUserRole && currentUserRole !== "admin") {
       if (currentUserRole === "student") {
         andConditions.push({ class: { students: { some: { id: currentUserId } } } });
       } else if (currentUserRole === "teacher") {

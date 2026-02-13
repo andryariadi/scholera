@@ -1,11 +1,19 @@
 import prisma from "@/libs/config/prisma";
-import { adjustScheduleToCurrentWeek } from "@/libs/utils";
+import { adjustScheduleToCurrentWeek, getCurrentUserRole } from "@/libs/utils";
 import BigCalendar from "./BigCalendar";
 
-const BigCalendarContainer = async ({ type, id }: { type: "teacherId" | "classId"; id: string }) => {
+const BigCalendarContainer = async ({ type }: { type: "teacherId" | "classId" }) => {
+  const userRes = await getCurrentUserRole();
+
+  const roleClass = await prisma.class.findFirst({
+    where: {
+      students: { some: { id: userRes?.userId } },
+    },
+  });
+
   const dataRes = await prisma.lesson.findMany({
     where: {
-      ...(type === "teacherId" ? { teacherId: id as string } : { classId: id as string }),
+      ...(type === "teacherId" ? { teacherId: roleClass?.id as string } : { classId: roleClass?.id as string }),
     },
   });
 
