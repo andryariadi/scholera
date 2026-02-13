@@ -1,5 +1,5 @@
 import Announcements from "@/components/Announcement";
-import BigCalendar from "@/components/BigCalendar";
+import BigCalendarContainer from "@/components/BigCalendarContainer";
 import EvCalendar from "@/components/EvCalendar";
 
 const StudentPage = () => {
@@ -10,7 +10,8 @@ const StudentPage = () => {
         <div className="bg-white shadow-xs p-4 rounded-md space-y-3">
           <h1 className="text-xl font-semibold">Schedule (4A)</h1>
 
-          <BigCalendar />
+          {/* <BigCalendar /> */}
+          <BigCalendarContainer type="classId" />
         </div>
       </div>
 

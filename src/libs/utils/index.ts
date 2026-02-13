@@ -133,7 +133,7 @@ export const buildWhereClause = <T>(conditions: T[]): T | { AND: T[] } => {
   return conditions.length > 0 ? ({ AND: conditions } as { AND: T[] }) : ({} as T);
 };
 
-// Handle Prisma errors:
+// Handle Prisma for query errors:
 export const handlePrismaError = (error: unknown): string => {
   if (error instanceof Prisma.PrismaClientKnownRequestError) {
     return `Database error: ${error.code} - ${error.message}`;
@@ -169,6 +169,56 @@ export const emptyPaginationResponse = <T>(
   },
   error: errorMessage,
 });
+
+// Handle prisma error for write operations:
+const PRISMA_ERROR_MESSAGES = {
+  P2002: "A record with this value already exists",
+  P2003: "Cannot perform this action. The record is referenced by other records.",
+  P2025: "Record not found",
+  P2001: "The record does not exist",
+} as const;
+
+const PRISMA_ERROR_CODES = {
+  P2002: "DUPLICATE_ERROR",
+  P2003: "FOREIGN_KEY_ERROR",
+  P2025: "NOT_FOUND_ERROR",
+  P2001: "NOT_FOUND_ERROR",
+} as const;
+
+export const handleActionError = (error: unknown, operation: "create" | "update" | "delete", entityName: string = "record"): { error: string; code: string } => {
+  console.error(`Error during ${operation} ${entityName}:`, error);
+
+  if (error instanceof Prisma.PrismaClientKnownRequestError) {
+    const prismaCode = error.code as keyof typeof PRISMA_ERROR_MESSAGES;
+    const errorMessage = PRISMA_ERROR_MESSAGES[prismaCode];
+
+    if (errorMessage) {
+      return {
+        error: errorMessage,
+        code: PRISMA_ERROR_CODES[prismaCode] || "DATABASE_ERROR",
+      };
+    }
+  }
+
+  if (error instanceof Prisma.PrismaClientValidationError) {
+    return {
+      error: "Invalid data provided",
+      code: "VALIDATION_ERROR",
+    };
+  }
+
+  if (error instanceof Error) {
+    return {
+      error: error.message,
+      code: "UNKNOWN_ERROR",
+    };
+  }
+
+  return {
+    error: `Failed to ${operation} ${entityName}. Please try again.`,
+    code: "DATABASE_ERROR",
+  };
+};
 
 type CurrentUserResponse = {
   userId: string;

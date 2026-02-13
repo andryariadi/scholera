@@ -2,6 +2,7 @@
 
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
 import { ChevronLeft, ChevronRight } from "lucide-react";
+import { useEffect } from "react";
 
 interface PaginationProps {
   total: number;
@@ -18,6 +19,14 @@ const Pagination = ({ total, page, limit, totalPages, hasNext, hasPrev }: Pagina
   const searchParams = useSearchParams();
   const pathname = usePathname();
   const router = useRouter();
+
+  useEffect(() => {
+    if (totalPages > 0 && page > totalPages) {
+      const params = new URLSearchParams(searchParams);
+      params.set("page", totalPages.toString());
+      router.replace(`${pathname}?${params.toString()}`);
+    }
+  }, [page, totalPages, pathname, router, searchParams]);
 
   const handlePageChange = (newPage: number) => {
     if (newPage < 1 || newPage > totalPages) return;

@@ -33,9 +33,14 @@ export const teacherSchema = z.object({
       },
       {
         message: "Image is required! Max 5MB. Formats: jpg, jpeg, png, webp",
-      }
+      },
     )
     .optional(),
 });
 
+export const subjectSchema = z.object({
+  name: z.string().min(1, { message: "Subject name is required!" }),
+});
+
+export type subjectInput = z.infer<typeof subjectSchema>;
 export type teacherInput = z.infer<typeof teacherSchema>;

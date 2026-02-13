@@ -4,6 +4,8 @@ import "./globals.css";
 import { ClerkProvider } from "@clerk/nextjs";
 import { Suspense } from "react";
 import Loader from "@/components/skeletons/Loader";
+import { ToastContainer } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -36,7 +38,11 @@ export default function RootLayout({
     <html lang="en" className="light">
       <body className={`${geistSans.variable} ${geistMono.variable} antialiased`}>
         <Suspense fallback={<Loader />}>
-          <ClerkProvider>{children}</ClerkProvider>
+          <ClerkProvider>
+            {children}
+
+            <ToastContainer position="top-right" theme="dark" />
+          </ClerkProvider>
         </Suspense>
       </body>
     </html>

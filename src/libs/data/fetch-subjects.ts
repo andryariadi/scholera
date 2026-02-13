@@ -38,7 +38,7 @@ export interface GetSubjectsResponse {
 export const getSubjects = async (params: GetSubjectsParams = {}): Promise<GetSubjectsResponse> => {
   "use cache";
   cacheLife("hours");
-  cacheTag("subjects", `subjects-page-${params.page || 1}`);
+  cacheTag("subjects");
 
   try {
     // Default values for params:
