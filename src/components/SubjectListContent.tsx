@@ -1,9 +1,9 @@
 import { SubjectListPageProps } from "@/app/(dashboard)/list/subjects/page";
-import FormModal from "./FormModal";
 import Table from "./Table";
 import { getSubjects } from "@/libs/data/fetch-subjects";
 import { SubjectList } from "@/libs/types/prisma-schema";
 import Pagination from "./Pagination";
+import FormModalContainer from "./FormModalContainer";
 
 const SubjectListContent = async ({ searchParams, currentUserId, currentUserRole }: SubjectListPageProps) => {
   const params = await searchParams;
@@ -54,8 +54,8 @@ const SubjectListContent = async ({ searchParams, currentUserId, currentUserRole
         <div className="flex items-center gap-2">
           {currentUserRole === "admin" && (
             <>
-              <FormModal table="subject" type="update" data={item} />
-              <FormModal table="subject" type="delete" id={item.id} />
+              <FormModalContainer table="subject" type="update" data={item} />
+              <FormModalContainer table="subject" type="delete" id={item.id} />
             </>
           )}
         </div>

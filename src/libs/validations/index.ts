@@ -40,7 +40,16 @@ export const teacherSchema = z.object({
 
 export const subjectSchema = z.object({
   name: z.string().min(1, { message: "Subject name is required!" }),
+  teachers: z.array(z.string()).min(1, { message: "At least one teacher is required!" }),
+});
+
+export const classSchema = z.object({
+  name: z.string().min(1, { message: "Class name is required!" }),
+  capacity: z.number().min(1, { message: "Capacity is required!" }),
+  gradeId: z.string().min(1, { message: "Grade is required!" }),
+  supervisorId: z.string().optional(),
 });
 
 export type subjectInput = z.infer<typeof subjectSchema>;
 export type teacherInput = z.infer<typeof teacherSchema>;
+export type classInput = z.infer<typeof classSchema>;

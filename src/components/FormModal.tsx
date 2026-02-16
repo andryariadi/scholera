@@ -5,6 +5,8 @@ import { Loader, Plus, SquarePen, Trash2, X } from "lucide-react";
 import dynamic from "next/dynamic";
 import React, { useState } from "react";
 import { toast } from "react-toastify";
+import ClassForm from "./forms/ClassFormModal";
+import { deleteClass } from "@/libs/actions/class.action";
 // import TeacherForm from "./forms/TeacherFormModal";
 // import StudentForm from "./forms/StudentFormModal";
 
@@ -19,14 +21,15 @@ const SubjectForm = dynamic(() => import("./forms/SubjectFormModal"), {
 });
 
 const forms: {
-  [key: string]: (type: "create" | "update", data?: any, handleCloseModal?: () => void) => React.JSX.Element;
+  [key: string]: (type: "create" | "update", data?: any, relateData?: any, handleCloseModal?: () => void) => React.JSX.Element;
 } = {
   teacher: (type, data) => <TeacherForm type={type} data={data} />,
   student: (type, data) => <StudentForm type={type} data={data} />,
-  subject: (type, data, handleCloseModal) => <SubjectForm type={type} data={data} handleCloseModal={handleCloseModal} />,
+  subject: (type, data, relateData, handleCloseModal) => <SubjectForm type={type} data={data} relateData={relateData} handleCloseModal={handleCloseModal} />,
+  class: (type, data, relateData, handleCloseModal) => <ClassForm type={type} data={data} relateData={relateData} handleCloseModal={handleCloseModal} />,
 };
 
-const Form = <T,>({ table, type, data, id, handleCloseModal }: { type: "create" | "update" | "delete"; table: string; data: T; id?: string | number; handleCloseModal: () => void }) => {
+const Form = <T,>({ table, type, data, id, relateData, handleCloseModal }: { type: "create" | "update" | "delete"; table: string; data: T; id?: string | number; relateData?: T; handleCloseModal: () => void }) => {
   const [isDeleting, setIsDeleting] = useState(false);
 
   const handleDelete = async (e: React.FormEvent) => {
@@ -38,6 +41,8 @@ const Form = <T,>({ table, type, data, id, handleCloseModal }: { type: "create" 
 
       if (table === "subject") {
         res = await deleteSubject(id as string);
+      } else if (table === "class") {
+        res = await deleteClass(id as string);
       }
 
       if (res?.success) {
@@ -72,13 +77,13 @@ const Form = <T,>({ table, type, data, id, handleCloseModal }: { type: "create" 
     </form>
   ) : // Form to update or create:
   type === "create" || type === "update" ? (
-    forms[table](type, data, handleCloseModal)
+    forms[table](type, data, relateData, handleCloseModal)
   ) : (
     "Form not found!"
   );
 };
 
-const FormModal = <T,>({ table, type, data, id }: FormModal<T>) => {
+const FormModal = <T,>({ table, type, data, id, relateData }: FormModal<T>) => {
   const [open, setOpen] = useState(false);
 
   const size = type === "create" ? "w-8 h-8" : "w-7 h-7";
@@ -108,7 +113,7 @@ const FormModal = <T,>({ table, type, data, id }: FormModal<T>) => {
       overflow-y-auto p-4 rounded-md shadow-lg relative w-[90%] md:w-[70%] lg:w-[60%] xl:w-[50%] 2xl:w-[40%] transform transition-all duration-300 ease-out
       scale-100 opacity-100 sidebar"
           >
-            <Form table={table} type={type} data={data} id={id} handleCloseModal={handleCloseModal} />
+            <Form table={table} type={type} data={data} id={id} relateData={relateData} handleCloseModal={handleCloseModal} />
 
             {/* Close button */}
             <div className="absolute top-2.5 right-4 cursor-pointer" onClick={() => setOpen(false)}>

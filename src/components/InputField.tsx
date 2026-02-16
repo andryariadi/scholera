@@ -1,4 +1,4 @@
-import { FieldError, FieldValues, Path, UseFormRegister } from "react-hook-form";
+import { FieldError, FieldValues, Path, RegisterOptions, UseFormRegister } from "react-hook-form";
 import { Eye, EyeClosed } from "lucide-react";
 import { useState } from "react";
 
@@ -11,9 +11,10 @@ type InputFieldProps<T extends FieldValues> = {
   error?: FieldError;
   inputProps?: React.InputHTMLAttributes<HTMLInputElement>;
   className?: string;
+  registerOptions?: RegisterOptions<T, Path<T>>;
 };
 
-const InputField = <T extends FieldValues>({ label, type = "text", register, name, defaultValue, error, inputProps, className }: InputFieldProps<T>) => {
+const InputField = <T extends FieldValues>({ label, type = "text", register, name, defaultValue, error, inputProps, className, registerOptions }: InputFieldProps<T>) => {
   const [showPassword, setShowPassword] = useState(false);
 
   const isPasswordField = type === "password";
@@ -34,7 +35,7 @@ const InputField = <T extends FieldValues>({ label, type = "text", register, nam
       <div className="relative">
         <input
           type={inputType}
-          {...register(name)}
+          {...register(name, registerOptions)}
           className={`ring-[1.5px] ${error?.message ? "ring-red-400" : "ring-gray-300"} p-2 rounded-md text-sm w-full ${isPasswordField ? "pr-10" : ""}`}
           {...inputProps}
           defaultValue={formatDefaultValue()}
