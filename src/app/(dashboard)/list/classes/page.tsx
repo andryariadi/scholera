@@ -1,5 +1,5 @@
 import ClassListContent from "@/components/ClassListContent";
-import FormModal from "@/components/FormModal";
+import FormModalContainer from "@/components/FormModalContainer";
 import TableSearchSkeleton from "@/components/skeletons/SearchBarSkeleton";
 import { TeacherListSkeleton } from "@/components/skeletons/TeacherTableSkeleton";
 import TableFilter from "@/components/TableFilter";
@@ -50,12 +50,7 @@ const ClassListPage = async ({ searchParams }: ClassListPageProps) => {
             <TableSort options={classSortOptions} />
 
             {/* Modal Button */}
-            {role === "admin" && (
-              // <button className="action-btn">
-              //   <Plus size={14} />
-              // </button>
-              <FormModal table="class" type="create" />
-            )}
+            {role === "admin" && <FormModalContainer table="class" type="create" />}
           </div>
         </div>
       </div>

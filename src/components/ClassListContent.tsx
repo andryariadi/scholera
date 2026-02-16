@@ -1,9 +1,9 @@
 import { ClassListPageProps } from "@/app/(dashboard)/list/classes/page";
 import { ClassList } from "@/libs/types/prisma-schema";
-import FormModal from "./FormModal";
 import Table from "./Table";
 import Pagination from "./Pagination";
 import { getClasses } from "@/libs/data/fetch-classes";
+import FormModalContainer from "./FormModalContainer";
 
 const ClassListContent = async ({ searchParams, currentUserRole }: ClassListPageProps) => {
   const params = await searchParams;
@@ -52,14 +52,14 @@ const ClassListContent = async ({ searchParams, currentUserRole }: ClassListPage
       {/* Grade */}
       <td className="hidden md:table-cell">{item.grade.level}</td>
       {/* Supervisor */}
-      <td className="hidden md:table-cell">{item.supervisor.name}</td>
+      <td className="hidden md:table-cell">{item.supervisor?.name || "-"}</td>
       {/* Actions */}
       <td>
         <div className="flex items-center gap-2">
           {currentUserRole === "admin" && (
             <>
-              <FormModal table="class" type="update" data={item} />
-              <FormModal table="class" type="delete" id={item.id} />
+              <FormModalContainer table="class" type="update" data={item} />
+              <FormModalContainer table="class" type="delete" id={item.id} />
             </>
           )}
         </div>

@@ -14,8 +14,6 @@ interface PaginationProps {
 }
 
 const Pagination = ({ total, page, limit, totalPages, hasNext, hasPrev }: PaginationProps) => {
-  console.log({ total, page, limit, totalPages, hasNext, hasPrev });
-
   const searchParams = useSearchParams();
   const pathname = usePathname();
   const router = useRouter();

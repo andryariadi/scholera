@@ -5,12 +5,37 @@ import prisma from "../config/prisma";
 import { subjectInput } from "../validations";
 import { handleActionError } from "../utils";
 
+type SubjectResponse = {
+  id: string;
+  name: string;
+};
+
 type ActionResult<T> = { success: true; data: T } | { success: false; error: string; code: string };
 
-export const createSubject = async (data: subjectInput): Promise<ActionResult<subjectInput>> => {
+export const createSubject = async (data: subjectInput): Promise<ActionResult<SubjectResponse>> => {
+  console.log({ data }, "<---actionData");
+
   try {
+    // Validate teachers array is not empty
+    if (!data.teachers || data.teachers.length === 0) {
+      return {
+        success: false,
+        error: "At least one teacher must be selected",
+        code: "VALIDATION_ERROR",
+      };
+    }
+
     const res = await prisma.subject.create({
-      data,
+      data: {
+        name: data.name,
+        teachers: {
+          connect: data.teachers.map((teacherId) => ({ id: teacherId })),
+        },
+      },
+      select: {
+        id: true,
+        name: true,
+      },
     });
 
     updateTag("subjects");
@@ -24,12 +49,12 @@ export const createSubject = async (data: subjectInput): Promise<ActionResult<su
   }
 };
 
-export const updateSubject = async (id: string, data: subjectInput): Promise<ActionResult<subjectInput>> => {
+export const updateSubject = async (id: string, data: subjectInput): Promise<ActionResult<SubjectResponse>> => {
+  console.log({ id, data }, "<---updateAction");
+
   try {
     const existingSubject = await prisma.subject.findUnique({
-      where: {
-        id,
-      },
+      where: { id },
     });
 
     if (!existingSubject) {
@@ -40,11 +65,26 @@ export const updateSubject = async (id: string, data: subjectInput): Promise<Act
       };
     }
 
+    if (!data.teachers || data.teachers.length === 0) {
+      return {
+        success: false,
+        error: "At least one teacher must be selected",
+        code: "VALIDATION_ERROR",
+      };
+    }
+
     const res = await prisma.subject.update({
-      where: {
-        id,
+      where: { id },
+      data: {
+        name: data.name,
+        teachers: {
+          set: data.teachers.map((teacherId) => ({ id: teacherId })),
+        },
       },
-      data,
+      select: {
+        id: true,
+        name: true,
+      },
     });
 
     updateTag("subjects");
@@ -61,9 +101,7 @@ export const updateSubject = async (id: string, data: subjectInput): Promise<Act
 export const deleteSubject = async (id: string): Promise<ActionResult<{ id: string }>> => {
   try {
     const existingSubject = await prisma.subject.findUnique({
-      where: {
-        id,
-      },
+      where: { id },
     });
 
     if (!existingSubject) {
@@ -73,15 +111,14 @@ export const deleteSubject = async (id: string): Promise<ActionResult<{ id: stri
         code: "NOT_FOUND_ERROR",
       };
     }
-    const res = await prisma.subject.delete({
-      where: {
-        id,
-      },
+
+    await prisma.subject.delete({
+      where: { id },
     });
 
     updateTag("subjects");
 
-    return { success: true, data: res };
+    return { success: true, data: { id } };
   } catch (error) {
     return {
       success: false,

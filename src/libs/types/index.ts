@@ -13,6 +13,7 @@ interface FormModal<T> {
   type: "create" | "update" | "delete";
   id?: string | number;
   data?: T;
+  relateData?: T;
 }
 
 interface Teacher {

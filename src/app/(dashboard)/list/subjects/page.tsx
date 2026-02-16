@@ -1,4 +1,4 @@
-import FormModal from "@/components/FormModal";
+import FormModalContainer from "@/components/FormModalContainer";
 import TableSearchSkeleton from "@/components/skeletons/SearchBarSkeleton";
 import { TeacherListSkeleton } from "@/components/skeletons/TeacherTableSkeleton";
 import SubjectListContent from "@/components/SubjectListContent";
@@ -51,7 +51,7 @@ const SubjectListPage = async ({ searchParams }: SubjectListPageProps) => {
             <TableSort options={subjectSortOptions} />
 
             {/* Modal Button */}
-            {role === "admin" && <FormModal table="subject" type="create" />}
+            {role === "admin" && <FormModalContainer table="subject" type="create" />}
           </div>
         </div>
       </div>
